@@ -1,11 +1,11 @@
-/* PeakCut ASCII field: a soft colour cloud with loose clusters of small characters that fade in and out as it drifts.
+/* NovaCut ASCII field: a soft colour cloud with loose clusters of small characters that fade in and out as it drifts.
    Smooth: every character keeps its own glyph and only its opacity moves, and the cloud is drawn small and scaled up
    (a cheap, natural blur), so it can run at full frame rate.
    Usage: PeakAscii(canvasElement, {strength: 1}). Pauses off screen and when the tab is hidden; still for reduced motion. */
 (function () {
   const GLYPHS = "-=+xX+x=";
-  const CLOUD = [[255, 206, 166], [255, 228, 198], [255, 192, 146], [255, 238, 220]];
-  const INK = "214,120,52";
+  const CLOUD = [[191, 219, 254], [239, 246, 255], [147, 197, 253], [219, 234, 254]];
+  const INK = "37,99,235";
 
   const P = new Uint8Array(512);
   (function () { const p = []; for (let i = 0; i < 256; i++) p[i] = i;

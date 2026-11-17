@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NovaCut</title>
-<link rel="icon" type="image/svg+xml" href="/brand/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/brand/novacut-favicon-v2.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Archivo+Black&family=Anton&family=Poppins:wght@800&display=swap" rel="stylesheet">
@@ -816,7 +816,7 @@ dialog[open]{animation:fadein .16s ease}
 <body>
 <div class="app" id="app">
   <aside class="side" aria-label="Sidebar">
-    <div class="side-head"><img class="logo" src="/brand/logo-light.svg" alt="NovaCut"><img class="mark" src="/brand/favicon.svg" alt="NovaCut">
+    <div class="side-head"><img class="logo" src="/brand/novacut-logo-light-v2.svg" alt="NovaCut"><img class="mark" src="/brand/novacut-favicon-v2.svg" alt="NovaCut">
       <button class="icon-btn collapse" data-act="collapse" id="collapseBtn" aria-label="Collapse sidebar"></button></div>
     <nav class="nav" id="nav" aria-label="Main"></nav>
     <div class="side-foot" id="foot"></div>
@@ -1293,7 +1293,7 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
   try { upSeen = localStorage.getItem("novacut_update_seen") || ""; } catch {}
   const upBar = up && up.latest !== upSeen ? `<div class="vb" role="status">${ic("up")}<span>${up.restart ? "<b>The new version is downloaded.</b> Close NovaCut and start it again to use it." : `A new version of NovaCut is out${up.behind ? `: <b>${up.behind} update${up.behind === 1 ? "" : "s"}</b> since yours` : ""}.`}</span>
     <button class="btn sm primary" data-act="updhow">${up.restart ? "What's new" : "How to update"}</button><button class="btn sm ghost" data-act="updlater" aria-label="Hide until the next version">Later</button></div>` : "";
-  const toolBar = S.status.no_ffmpeg ? `<div class="vb" role="alert">${ic("warn")}<span><b>NovaCut can't make clips yet: ffmpeg isn't installed on this computer.</b> Open a terminal, run <code>winget install Gyan.FFmpeg</code> (Mac: <code>brew install ffmpeg</code>, Linux: <code>sudo apt install ffmpeg</code>), then close PeakCut and start it again.</span></div>` : "";
+  const toolBar = S.status.no_ffmpeg ? `<div class="vb" role="alert">${ic("warn")}<span><b>NovaCut can't make clips yet: ffmpeg isn't installed on this computer.</b> Open a terminal, run <code>winget install Gyan.FFmpeg</code> (Mac: <code>brew install ffmpeg</code>, Linux: <code>sudo apt install ffmpeg</code>), then close NovaCut and start it again.</span></div>` : "";
   const aiBar = !toolBar && S.status.ai?.problem && me?.is_admin && S.view !== "settings" ? `<div class="vb" role="status">${ic("warn")}<span><b>The AI isn't answering.</b> ${esc(S.status.ai.problem)} Until then, clips are picked by loudness.</span><button class="btn sm primary" data-act="go" data-v="settings" data-tab="ai">Open AI settings</button></div>` : "";
   const diskBar = !toolBar && S.status.disk_full && S.view !== "settings" ? `<div class="vb" role="alert">${ic("warn")}<span><b>The drive NovaCut saves to is almost full, so it can't take new videos.</b> Free up space on it, or move NovaCut's folder to a bigger drive.</span>${me?.is_admin ? `<button class="btn sm primary" data-act="go" data-v="settings" data-tab="storage">Open Storage</button>` : ""}</div>` : "";
   put($("#vbanner"), toolBar ? toolBar : diskBar ? diskBar : aiBar ? aiBar : upBar ? upBar : me && me.verified === false ? `<div class="vb" role="status">${ic("warn")}<span>Confirm your email to start clipping. We sent a link to <b>${esc(me.email)}</b>.</span><button class="btn sm" data-act="resendverify">Send a new link</button></div>`
@@ -1339,7 +1339,7 @@ function go(v, tab, fromHistory) {
   else if (v === "usage") { view.innerHTML = `<div id="usage"></div>`; loadUsage(); }
   else view.innerHTML = `<div id="stream"></div><div id="cbody"></div>`;   // the live player stays put across tabs: no restart, no rebuffer
   if ($("#add")) drawAdd(v === "overview" ? "hero" : "compact");
-  if (v === "overview" && window.GradientASCII) { try { window._gaStop = GradientASCII($("#appAscii"), {colors: ["#ffb27a", "#ffffff", "#ffd2ae", "#ffe0c2", "#fff1e6"], shape: "horizon", lightMode: true, cellSize: 16, density: 0.8, glyphOpacity: 0.26, gradientOpacity: 0.32, glow: 0.06, grain: 0.06, mouseInteraction: false, clickEffect: "none"}); } catch {} }
+  if (v === "overview" && window.GradientASCII) { try { window._gaStop = GradientASCII($("#appAscii"), {colors: ["#3b82f6", "#ffffff", "#60a5fa", "#bfdbfe", "#eff6ff"], shape: "horizon", lightMode: true, cellSize: 16, density: 0.8, glyphOpacity: 0.26, gradientOpacity: 0.32, glow: 0.06, grain: 0.06, mouseInteraction: false, clickEffect: "none"}); } catch {} }
   if (v === "settings") drawSettings();
   if (v.startsWith("c:")) setTab(S.ctab);
   $("#main").scrollTo(0, 0); render();
@@ -1797,7 +1797,7 @@ function drawJobs() {
     list = list.filter(j => j.status !== "live"); }
   if (!list.length) {
     root.querySelectorAll("section").forEach(e => e.remove());
-    if (!$(".empty", root)) root.innerHTML = `<div class="empty"><img src="/brand/favicon.svg" alt=""><b>${cid ? "No clips for this creator yet" : "No videos yet"}</b>${cid ? "Start recording their stream, or paste a link to one of their videos above." : "Paste a link above and the studio will find the best moments and turn them into clips."}</div>`;
+    if (!$(".empty", root)) root.innerHTML = `<div class="empty"><img src="/brand/novacut-favicon-v2.svg" alt=""><b>${cid ? "No clips for this creator yet" : "No videos yet"}</b>${cid ? "Start recording their stream, or paste a link to one of their videos above." : "Paste a link above and the studio will find the best moments and turn them into clips."}</div>`;
     return;
   }
   $(".empty", root)?.remove();
@@ -1881,7 +1881,7 @@ async function saveCreator(quiet) {
 function drawLog() {
   const c = creator();
   put($("#clog"), c && c.log.length ? `<div class="card"><div class="log">${c.log.map(l => `<div><time>${when(l.t)}</time><span>${esc(l.msg)}</span></div>`).join("")}</div></div>`
-    : `<div class="empty"><img src="/brand/favicon.svg" alt=""><b>Nothing has happened yet</b>Recordings, clips and posts for this creator will be listed here.</div>`);
+    : `<div class="empty"><img src="/brand/novacut-favicon-v2.svg" alt=""><b>Nothing has happened yet</b>Recordings, clips and posts for this creator will be listed here.</div>`);
 }
 
 /* ============================================================ overview */
@@ -1937,7 +1937,7 @@ function drawOverview() {
     <div class="card"><div class="card-head"><div><h2>Creators</h2><p class="sub">Each creator's status and results</p></div></div>
       ${o.creators.length ? `<div class="scroll"><table><tr><th>Creator</th><th>Status</th><th>Auto-post</th><th class="num">Clips today</th><th class="num">Posted today</th><th class="num">Waiting</th><th class="num">Failed</th><th class="num">Views</th><th class="num">Est. $</th></tr>
       ${o.creators.map(r => `<tr><td><a class="lnk" href="#" data-act="go" data-v="c:${esc(r.id)}">${esc(r.name)}</a></td><td>${state(r)}</td><td>${r.autopost ? `<span class="pill ok">On</span>` : `<span class="pill">Off</span>`}</td><td class="num">${r.clips_today} <span class="sub">/ ${r.clips_total}</span></td><td class="num">${r.posted_today} <span class="sub">/ ${r.posted_total}</span></td><td class="num">${r.queued}</td><td class="num">${r.failed}</td><td class="num">${r.views.toLocaleString()}</td><td class="num">${r.earnings.toFixed(2)}</td></tr>`).join("")}</table></div>`
-      : `<div class="empty"><img src="/brand/favicon.svg" alt=""><b>No creators yet</b>Add one to give each streamer their own workspace.</div>`}</div>
+      : `<div class="empty"><img src="/brand/novacut-favicon-v2.svg" alt=""><b>No creators yet</b>Add one to give each streamer their own workspace.</div>`}</div>
     <div class="card"><div class="card-head"><div><h2>Post queue</h2><p class="sub">${o.paused ? "Paused. Recording and clipping carry on; nothing is posted." : "Queued clips go out at their scheduled time."}</p></div>
         <button class="btn ${o.paused ? "primary" : ""}" data-act="pause">${ic(o.paused ? "play" : "pause")}${o.paused ? "Resume posting" : "Pause all posting"}</button></div>
       ${o.posts.length ? `<div class="scroll"><table class="stack"><tr><th>When</th><th>Clip</th><th>Creator</th><th>Account</th><th class="num">Views</th><th></th></tr>
@@ -2062,7 +2062,7 @@ async function drawSettings() {
           <div class="stor-bar ${s.full ? "low" : ""}" role="img" aria-label="${Math.round(usedPct)}% of the drive is used"><i style="width:${usedPct}%"></i></div>
           <div class="stor-nums"><span>NovaCut uses <b>${gb(s.used_gb)}</b></span><span><b>${gb(s.free_gb)}</b> free of ${gb(s.total_gb)} on ${esc(s.drive)}</span></div>
           ${s.fixed ? `<p class="sub" style="margin-top:16px">This folder is set with PEAKCUT_DATA in the .env file. Change it there, or remove that line to choose it here.</p>`
-            : S.storOpen ? `<div class="stor-change"><label class="f">New folder<span class="with"><input id="stor_new" placeholder="For example D:\\PeakCut" spellcheck="false" value="${esc(S.storNew || "")}">${s.local ? `<button class="btn" type="button" data-act="storpick">Browse</button>` : ""}</span></label>
+            : S.storOpen ? `<div class="stor-change"><label class="f">New folder<span class="with"><input id="stor_new" placeholder="For example D:\\NovaCut" spellcheck="false" value="${esc(S.storNew || "")}">${s.local ? `<button class="btn" type="button" data-act="storpick">Browse</button>` : ""}</span></label>
                 <label class="ck"><input type="checkbox" id="stor_move" checked>Move everything that is in the current folder there too</label>
                 <p class="sub">The change happens the next time NovaCut starts, so nothing is moved while a video is being made.</p>
                 <div class="row"><button class="btn primary" data-act="storsave">Use this folder</button><button class="btn ghost" data-act="storchange">Cancel</button></div></div>`

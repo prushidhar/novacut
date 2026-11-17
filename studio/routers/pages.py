@@ -136,7 +136,7 @@ def brand(name: str):
     if not re.fullmatch(r"[\w\-]+\.(svg|png|ico|webp|jpg|mp4)", name) or not (WEB / "brand" / name).is_file():
         raise HTTPException(404)
     return FileResponse(
-        WEB / "brand" / name, headers={"Cache-Control": "public, max-age=604800, stale-while-revalidate=86400"}
+        WEB / "brand" / name, headers={"Cache-Control": "no-cache, must-revalidate"}
     )
 
 
@@ -153,4 +153,4 @@ def asset(name: str):
 
 @router.get("/favicon.ico")
 def favicon():
-    return RedirectResponse("/brand/favicon.svg", 308)
+    return RedirectResponse("/brand/novacut-favicon-v2.svg", 308)
