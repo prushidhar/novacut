@@ -1,0 +1,42 @@
+[project]
+name = "peakcut"
+version = "0.1.0"
+description = "Turn long videos and live streams into captioned vertical clips"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi==0.162.5",
+  "httpx==0.28.1",
+  "numpy==2.2.6",
+  "psycopg==3.3.9",
+  "psycopg-binary==3.3.9",
+  "python-multipart==0.0.32",
+  "sherpa-onnx==2.0.1",
+  "soundfile==0.14.0",
+  "SQLAlchemy==2.0.57",
+  "uvicorn==0.54.0",
+  "yt-dlp==2026.10.21",
+  "pillow==11.3.0",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 140
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "TCH"]
+ignore = ["E501", "E741", "B007", "B904", "SIM108", "SIM105", "UP007"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["studio"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+check_untyped_defs = false
