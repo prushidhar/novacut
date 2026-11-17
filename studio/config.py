@@ -20,7 +20,24 @@ def _load_dotenv():
 
 
 _load_dotenv()
-env = os.environ.get
+
+
+def env(key: str, default: str = "") -> str:
+    """Read an environment variable, supporting both NOVACUT_* and legacy PEAKCUT_* seamlessly."""
+    val = os.environ.get(key)
+    if val is not None and val != "":
+        return val
+    if key.startswith("PEAKCUT_"):
+        alt = "NOVACUT_" + key[8:]
+        val = os.environ.get(alt)
+        if val is not None and val != "":
+            return val
+    elif key.startswith("NOVACUT_"):
+        alt = "PEAKCUT_" + key[8:]
+        val = os.environ.get(alt)
+        if val is not None and val != "":
+            return val
+    return default
 
 
 _kept: dict = {}
@@ -127,7 +144,8 @@ YT_TRANSCRIPT = env("PEAKCUT_YT_TRANSCRIPT", "1") != "0"
 # the compact model for processors; a machine with a graphics card sets PEAKCUT_ASR_MODEL to the full-precision one
 ASR_MODEL_NAME = env("PEAKCUT_ASR_MODEL", "sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8")
 ASR_MODEL_DIR = MODELS_DIR / ASR_MODEL_NAME
-DATABASE_URL = env("DATABASE_URL") or f"sqlite:///{(DATA_DIR / 'peakcut.db').as_posix()}"
+_DB_NAME = "novacut.db" if (DATA_DIR / "novacut.db").exists() or not (DATA_DIR / "peakcut.db").exists() else "peakcut.db"
+DATABASE_URL = env("DATABASE_URL") or f"sqlite:///{(DATA_DIR / _DB_NAME).as_posix()}"
 
 for d in (USERS_DIR, MODELS_DIR, TMP_DIR, FONTS_DIR):
     d.mkdir(parents=True, exist_ok=True)
@@ -151,8 +169,8 @@ SESSION_DAYS = int(env("PEAKCUT_SESSION_DAYS", "30"))
 ACCOUNTS = env("PEAKCUT_ACCOUNTS", "0") == "1"
 # The two buttons along the top of the dashboard: the project's code, and where to follow its maker (feedback goes
 # there too). Set either to an empty value to hide that button, or point them at your own pages in a fork.
-REPO_URL = env("PEAKCUT_REPO_URL", "https://github.com/prushidhar/peakcut").strip()
-FOLLOW_URL = env("PEAKCUT_FOLLOW_URL", "https://github.com/prushidhar").strip()
+REPO_URL = (env("NOVACUT_REPO_URL") or env("PEAKCUT_REPO_URL", "https://github.com/prushidhar/novacut")).strip()
+FOLLOW_URL = (env("NOVACUT_FOLLOW_URL") or env("PEAKCUT_FOLLOW_URL", "https://github.com/prushidhar")).strip()
 
 # ---------------------------------------------------------------- limits (per user, and for the whole server)
 # Your own PeakCut has no limits unless you set them: 0 (the default) means "none" for every limit below. The

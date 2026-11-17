@@ -1,4 +1,4 @@
-# PeakCut: one image with the web server, the clip pipeline and ffmpeg.
+# NovaCut: one image with the web server, the clip pipeline and ffmpeg.
 FROM python:3.11-slim
 
 RUN apt-get update \
@@ -13,7 +13,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY studio studio
 COPY web web
 
-ENV PEAKCUT_DATA=/data \
+ENV NOVACUT_DATA=/data \
+    NOVACUT_HOST=0.0.0.0 \
+    NOVACUT_PORT=8765 \
+    NOVACUT_TRUST_PROXY=1 \
+    PEAKCUT_DATA=/data \
     PEAKCUT_HOST=0.0.0.0 \
     PEAKCUT_PORT=8765 \
     PEAKCUT_TRUST_PROXY=1 \
