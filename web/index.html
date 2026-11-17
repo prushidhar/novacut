@@ -3,68 +3,69 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PeakCut</title>
+<title>NovaCut</title>
 <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@300&family=Archivo+Black&family=Anton&family=Poppins:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Archivo+Black&family=Anton&family=Poppins:wght@800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --brand:#FF8B33;--brand-press:#F27A1F;--brand-ink:#2A1A12;--brand-soft:#FFF2E8;--brand-line:#FFD9BC;--brand-deep:#A9480A;
-  --frame:#1E1612;--frame-2:#2C221D;--frame-line:rgba(255,255,255,.08);--frame-text:#F4EEEA;--frame-dim:#A99A91;
-  --bg:#FFFFFF;--muted:#F7F4F1;--line:#EEE8E4;--line-2:#E1D9D3;
-  --text:#211813;--dim:#6D6159;--faint:#A0948C;
-  --good:#0F8A57;--good-soft:#E6F6EE;--bad:#D3343F;--bad-soft:#FDECEE;--live:#E5323F;
+  --brand:#2563EB;--brand-press:#1D4ED8;--brand-ink:#0F172A;--brand-soft:#EFF6FF;--brand-line:#BFDBFE;--brand-deep:#1E40AF;
+  --frame:#0B0F19;--frame-2:#161F30;--frame-line:rgba(255,255,255,.08);--frame-text:#F8FAFC;--frame-dim:#94A3B8;
+  --bg:#FFFFFF;--muted:#F8FAFC;--line:#E2E8F0;--line-2:#CBD5E1;
+  --text:#0F172A;--dim:#475569;--faint:#94A3B8;
+  --good:#10B981;--good-soft:#ECFDF5;--bad:#EF4444;--bad-soft:#FEF2F2;--live:#EF4444;
   --r-lg:16px;--r:12px;--r-sm:8px;
   color-scheme:light;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
-body{margin:0;background:var(--frame);color:var(--text);font:14px/1.5 "Geist","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+body{margin:0;background:var(--frame);color:var(--text);font:14px/1.5 "Geist","Inter","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 h1,h2,h3,h4,p{margin:0}
 button,input,select,textarea{font:inherit;color:inherit}
 svg{width:18px;height:18px;flex:none;fill:currentColor}
-::selection{background:var(--brand-line)}
+::selection{background:var(--brand-soft);color:var(--brand)}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#E2D9D7;border-radius:999px;border:3px solid #fff}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:999px;border:3px solid #fff}
 
 /* ---------- frame */
 .app{display:grid;grid-template-columns:240px minmax(0,1fr);height:100vh}
-.side{background:var(--frame);color:var(--frame-text);display:flex;flex-direction:column;height:100vh;padding:14px 10px 12px;min-width:0}
+.side{background:var(--frame);color:var(--frame-text);display:flex;flex-direction:column;height:100vh;padding:14px 10px 12px;min-width:0;border-right:1px solid var(--frame-line)}
 .side-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 4px 22px 6px}
 .side-head .logo{height:36px;width:auto;display:block}
 .side-head .mark{display:none;width:34px;height:34px}
 .icon-btn{width:36px;height:36px;display:grid;place-items:center;border-radius:var(--r);border:0;background:transparent;color:var(--dim);cursor:pointer;flex:none}
 .side .icon-btn{color:var(--frame-dim)}
 .icon-btn:active{background:var(--muted)}.side .icon-btn:active{background:var(--frame-2)}
-.nav{display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex:1;min-height:0;scrollbar-width:none}
+.nav{display:flex;flex-direction:column;gap:3px;overflow-y:auto;flex:1;min-height:0;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
-.nav h4{font-size:12px;font-weight:500;color:var(--frame-dim);padding:14px 10px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;width:100%;min-height:34px;padding:0 10px;border-radius:7px;border:0;background:transparent;color:var(--frame-text);font-size:14px;font-weight:500;cursor:pointer;text-align:left}
+.nav h4{font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--frame-dim);padding:14px 10px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;min-height:36px;padding:0 10px;border-radius:8px;border:0;background:transparent;color:var(--frame-text);font-size:14px;font-weight:500;cursor:pointer;text-align:left;transition:all .15s ease}
 .nav-item svg{width:17px;height:17px}
 .nav-item svg{color:var(--frame-dim)}
+.nav-item:hover{background:var(--frame-2);color:#FFFFFF}
 .nav-item:active{background:var(--frame-2)}
-.nav-item.on{background:var(--brand);color:var(--brand-ink);font-weight:600}
-.nav-item.on svg{color:var(--brand-ink)}
+.nav-item.on{background:var(--brand);color:#FFFFFF;font-weight:600;box-shadow:0 2px 8px rgba(37,99,235,0.25)}
+.nav-item.on svg{color:#FFFFFF}
 .label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .count{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--frame-text);white-space:nowrap}
-.nav-item.on .count{background:rgba(42,26,18,.14);color:var(--brand-ink)}
-.avatar{width:26px;height:26px;border-radius:50%;background:rgba(255,139,51,.18);color:#FFB27A;display:grid;place-items:center;font-size:11px;font-weight:700;flex:none;overflow:hidden}
+.nav-item.on .count{background:rgba(255,255,255,.22);color:#FFFFFF}
+.avatar{width:26px;height:26px;border-radius:50%;background:rgba(37,99,235,.15);color:#3B82F6;display:grid;place-items:center;font-size:11px;font-weight:700;flex:none;overflow:hidden}
 img.avatar{object-fit:cover;background:rgba(255,255,255,.08)}
 .tav{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none;background:var(--muted)}
 #title{display:flex;align-items:center;gap:10px}
-.chprev{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--muted);animation:rise .25s ease both}
-.chprev img,.chprev .ph{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none;background:#EFE7E1}
+.chprev{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--muted);border:1px solid var(--line);animation:rise .25s ease both}
+.chprev img,.chprev .ph{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none;background:#E2E8F0}
 .chprev b{display:block;font-size:14px;color:var(--brand-ink)}
 .chprev span{font-size:12px;color:var(--faint)}
-.chprev.bad{background:#FDECEC;color:#A12A2A;font-size:13px}
+.chprev.bad{background:#FEF2F2;border-color:#FEE2E2;color:#DC2626;font-size:13px}
 .chprev .sk{width:120px}
-.nav-item.on .avatar{background:var(--brand-ink);color:var(--brand)}
-.nav-item.on img.avatar{background:var(--brand-ink)}
+.nav-item.on .avatar{background:#FFFFFF;color:var(--brand)}
+.nav-item.on img.avatar{background:#FFFFFF}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--live);animation:pulse 1.3s infinite;flex:none}
 .side-foot{display:flex;flex-direction:column;gap:2px;padding-top:12px;border-top:1px solid var(--frame-line)}
-.side-card{background:var(--frame-2);border-radius:var(--r);padding:12px 14px;margin-top:8px;font-size:12px;color:var(--frame-dim);display:flex;flex-direction:column;gap:7px}
+.side-card{background:var(--frame-2);border-radius:var(--r);padding:12px 14px;margin-top:8px;font-size:12px;color:var(--frame-dim);display:flex;flex-direction:column;gap:7px;border:1px solid rgba(255,255,255,0.05)}
 .side-card div{display:flex;align-items:center;gap:9px}
 .led{width:7px;height:7px;border-radius:50%;background:#3DDC97;flex:none}.led.no{background:#FF6B78}.led.mid{background:var(--brand)}
 .plans-btn{margin-top:10px;width:100%;background:var(--frame-text);color:var(--brand-ink);border:0}
@@ -80,10 +81,10 @@ main{background:var(--bg);margin:8px 8px 8px 0;border-radius:var(--r-lg);height:
 .upd .cmd{display:flex;gap:8px;align-items:center}
 .upd .cmd code{flex:1;min-width:0;overflow-wrap:anywhere;font-size:12px;background:var(--muted);border-radius:8px;padding:9px 11px}
 .upd h3{font-size:13px;font-weight:600;color:var(--brand-ink);margin:0}
-.vb{display:flex;align-items:center;gap:12px;margin:12px 28px 0;padding:12px 12px 12px 16px;border-radius:12px;background:#FFF4E6;color:#7A3E0C;font-size:14px;animation:rise .3s ease both}
-.vb svg{width:18px;height:18px;flex:none;color:var(--brand-deep)}
+.vb{display:flex;align-items:center;gap:12px;margin:12px 28px 0;padding:12px 12px 12px 16px;border-radius:12px;background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;font-size:14px;animation:rise .3s ease both}
+.vb svg{width:18px;height:18px;flex:none;color:var(--brand)}
 .vb span{flex:1;min-width:0}
-.vb b{color:#5A2C06}
+.vb b{color:#1E3A8A}
 @media (max-width:640px){.vb{margin:10px 16px 0;flex-wrap:wrap}}
 .topbar .titles{flex:1;min-width:0}
 #tpic:empty{display:none}
@@ -94,23 +95,23 @@ main{background:var(--bg);margin:8px 8px 8px 0;border-radius:var(--r-lg);height:
 .topbar.tabbed .titles{flex:0 1 auto;max-width:34%}
 .topbar.tabbed #actions{margin-left:auto}
 .utabs:empty{display:none}
-.utabs{display:flex;gap:2px;padding:3px;background:var(--muted);border-radius:11px;overflow-x:auto;scrollbar-width:none}
+.utabs{display:flex;gap:2px;padding:3px;background:var(--muted);border:1px solid var(--line);border-radius:11px;overflow-x:auto;scrollbar-width:none}
 @media (min-width:761px){.topbar.tabbed{position:sticky}.topbar.tabbed .utabs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}.topbar.tabbed .titles{max-width:calc(50% - 230px)}}
 @media (max-width:760px){.utabs{order:5;flex-basis:100%;margin:2px 0 0;position:relative}.topbar.tabbed .titles{max-width:none;flex:1}}
 .utabs .tabbtn{height:34px;padding:0 14px;border-radius:8px;background:transparent;color:var(--dim);font-size:13px;transition:background-color .18s ease,color .18s ease}
-.utabs .tabbtn:hover{background:#EDE3DB;color:var(--text)}
+.utabs .tabbtn:hover{background:#F1F5F9;color:var(--text)}
 .utabs .tabbtn::after{display:none}
-.utabs .tabbtn.on{background:transparent;color:var(--brand-ink)}
+.utabs .tabbtn.on{background:transparent;color:#FFFFFF}
 .utabs .tabbtn{position:relative;z-index:1}
-.utabs .ind{position:absolute;top:3px;bottom:3px;left:0;border-radius:8px;background:var(--brand);z-index:0;transition:transform .32s cubic-bezier(.3,.7,.2,1),width .32s cubic-bezier(.3,.7,.2,1)}
+.utabs .ind{position:absolute;top:3px;bottom:3px;left:0;border-radius:8px;background:var(--brand);z-index:0;box-shadow:0 2px 6px rgba(37,99,235,0.3);transition:transform .32s cubic-bezier(.3,.7,.2,1),width .32s cubic-bezier(.3,.7,.2,1)}
 .utabs .tabbtn,.utabs .tabbtn svg,.utabs .tabbtn .n{transition:color .25s ease,background-color .25s ease}
-.utabs .tabbtn.on svg{color:var(--brand-ink)}
+.utabs .tabbtn.on svg{color:#FFFFFF}
 .utabs .tabbtn .n{background:var(--muted);color:var(--dim)}
-.utabs .tabbtn.on .n{background:rgba(42,26,18,.14);color:var(--brand-ink)}
+.utabs .tabbtn.on .n{background:rgba(255,255,255,.25);color:#FFFFFF}
 .rdot{flex:none;width:9px;height:9px;border-radius:50%;background:#fff}
 .btn .rdot.on{background:#E5323F;animation:pulse 1.3s infinite}
 /* live stream panel */
-.stream{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,1fr);gap:14px;background:#1E1612;border-radius:16px;padding:12px;margin-bottom:22px;color:#EFE5DE;animation:rise .3s ease both}
+.stream{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,1fr);gap:14px;background:#0B0F19;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:12px;margin-bottom:22px;color:#F8FAFC;animation:rise .3s ease both}
 .stream .player{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000}
 .stream iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .noembed{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;background:#120D0A;color:#EFE5DE}
@@ -152,8 +153,8 @@ main{background:var(--bg);margin:8px 8px 8px 0;border-radius:var(--r-lg);height:
 .ttabs .tabbtn{height:32px;padding:0 12px;border-radius:8px;font-size:13px;color:var(--dim)}
 .ttabs .tabbtn::after{display:none}
 .ttabs .tabbtn svg{width:16px;height:16px}
-.ttabs .tabbtn:hover{background:#EDE3DB;color:var(--text)}
-.ttabs .tabbtn.on{background:var(--brand-soft);color:var(--brand-ink)}
+.ttabs .tabbtn:hover{background:#F1F5F9;color:var(--text)}
+.ttabs .tabbtn.on{background:var(--brand-soft);color:var(--brand);font-weight:600}
 .ttabs .tabbtn.on .n{background:#fff}
 #actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 #actions a.btn{text-decoration:none}
@@ -161,10 +162,10 @@ main{background:var(--bg);margin:8px 8px 8px 0;border-radius:var(--r-lg);height:
 @media (max-width:900px){.ttabs .tabbtn .lbl{display:none}.ttabs .tabbtn{padding:0 10px}}
 /* channels in Setup */
 .chans{display:flex;flex-direction:column;gap:8px}
-.chan{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--muted);min-height:64px}
+.chan{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--muted);border:1px solid var(--line);min-height:64px}
 .chan .logo{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center}
 .chan .logo svg{width:20px;height:20px}
-.chan .pic{flex:none;width:40px;height:40px;border-radius:50%;object-fit:cover;background:#EFE7E1}
+.chan .pic{flex:none;width:40px;height:40px;border-radius:50%;object-fit:cover;background:#E2E8F0}
 .chan .who{flex:1;min-width:0}
 .chan .who b{display:block;font-size:14px;color:var(--brand-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chan .who span{font-size:12px;color:var(--faint)}
@@ -196,12 +197,14 @@ img.avatar.ring{background:transparent}
 .app.mini .sb-tag{display:none}
 
 /* ---------- buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 14px;border-radius:var(--r);border:1px solid var(--line-2);background:#fff;color:var(--text);cursor:pointer;text-decoration:none;white-space:nowrap;font-weight:600}
-.btn:active{background:var(--muted)}
-.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 14px;border-radius:var(--r);border:1px solid var(--line-2);background:#fff;color:var(--text);cursor:pointer;text-decoration:none;white-space:nowrap;font-weight:600;transition:all .15s ease}
+.btn:hover{background:var(--muted);border-color:var(--dim)}
+.btn:active{background:var(--line)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#FFFFFF;box-shadow:0 2px 6px rgba(37,99,235,0.22)}
+.btn.primary:hover{background:#1D4ED8;border-color:#1D4ED8;box-shadow:0 4px 12px rgba(37,99,235,0.35)}
 .btn.primary:active{background:var(--brand-press);border-color:var(--brand-press)}
 .btn.dark{background:var(--brand-ink);border-color:var(--brand-ink);color:#fff}
-.btn.dark svg{color:var(--brand)}
+.btn.dark svg{color:#60A5FA}
 .btn.danger{background:var(--bad-soft);border-color:transparent;color:var(--bad)}
 .btn.ghost{background:transparent;border-color:transparent;color:var(--dim)}
 .btn.sm{height:32px;padding:0 11px;font-size:13px;gap:6px}
@@ -211,15 +214,15 @@ img.avatar.ring{background:transparent}
 .btn:disabled{opacity:.45;cursor:default;pointer-events:none}
 
 /* ---------- fields */
-:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea){width:100%;height:40px;padding:0 12px;background:#fff;border:1px solid var(--line-2);border-radius:var(--r-sm);min-width:0;outline:none;transition:border-color .15s ease}
+:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea){width:100%;height:40px;padding:0 12px;background:#fff;border:1px solid var(--line-2);border-radius:var(--r-sm);min-width:0;outline:none;transition:border-color .15s ease,box-shadow .15s ease}
 :where(textarea){height:auto;padding:10px 12px;resize:vertical}
-:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea):hover{border-color:#D9CCC2}
-:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea):focus{background:#fff;border-color:var(--brand)}
+:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea):hover{border-color:#94A3B8}
+:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea):focus{background:#fff;border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,0.12)}
 input:not([type=checkbox],[type=radio],[type=range]):focus-visible,select:focus-visible,textarea:focus-visible{outline:none}
 input::placeholder,textarea::placeholder{color:var(--faint)}
 label.f{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--dim);font-weight:600}
 label.sw{display:flex;align-items:center;gap:12px;cursor:pointer;color:var(--text);font-weight:600}
-label.sw input{appearance:none;width:38px;height:22px;border-radius:999px;background:#DCD2D0;position:relative;cursor:pointer;flex:none;margin:0}
+label.sw input{appearance:none;width:38px;height:22px;border-radius:999px;background:#CBD5E1;position:relative;cursor:pointer;flex:none;margin:0}
 label.sw input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
 label.sw input:checked{background:var(--brand)}label.sw input:checked::after{transform:translateX(16px)}
 label.sw small{display:block;color:var(--dim);font-size:12px;font-weight:400}
@@ -276,11 +279,11 @@ label.ck input{accent-color:var(--brand);margin:0}
 .composer-input:focus-within>svg{color:var(--brand)}
 .composer-input input,.composer-input input:focus{height:60px;border:0;background:transparent;padding:0 18px 0 48px;font-size:16px;border-radius:var(--r-lg) var(--r-lg) 0 0}
 .composer-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:2px 10px 10px 12px}
-.chip{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:999px;border:0;background:var(--muted);color:var(--dim);font-weight:500;font-size:13px;cursor:pointer;white-space:nowrap;transition:background-color .15s ease,color .15s ease}
+.chip{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--muted);color:var(--dim);font-weight:500;font-size:13px;cursor:pointer;white-space:nowrap;transition:all .15s ease}
 .composer.compact .chip{background:#fff}
 .chip svg{width:16px;height:16px}
-.chip:hover,.chip:focus-visible{background:#EDE3DB;color:var(--text)}
-.chip.on,.pick.open .chip{background:var(--brand-soft);color:var(--brand-ink)}
+.chip:hover,.chip:focus-visible{background:#F1F5F9;color:var(--text);border-color:var(--line-2)}
+.chip.on,.pick.open .chip{background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand)}
 .hint{font-size:12px;color:var(--faint);margin-right:6px}
 .composer-bar{flex-wrap:nowrap}
 .composer-bar .grow{display:none}
@@ -295,11 +298,11 @@ label.ck input{accent-color:var(--brand);margin:0}
 .att.has{grid-template-rows:1fr}
 .att>div{min-height:0;overflow:hidden}
 .att-in{display:flex;flex-direction:column;gap:8px;padding:0 12px 8px}
-.lp{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;background:var(--muted);animation:rise .28s ease both}
+.lp{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;background:var(--muted);border:1px solid var(--line);animation:rise .28s ease both}
 .composer.compact .lp{background:#fff}
-.lp .th{position:relative;flex:none;width:112px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#2A1A12}
+.lp .th{position:relative;flex:none;width:112px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#0F172A}
 .lp .th img{width:100%;height:100%;object-fit:cover;display:block}
-.lp .th .du{position:absolute;right:5px;bottom:5px;background:rgba(20,12,8,.82);color:#fff;font-size:11px;font-weight:600;padding:1px 6px;border-radius:6px}
+.lp .th .du{position:absolute;right:5px;bottom:5px;background:rgba(15,23,42,.85);color:#fff;font-size:11px;font-weight:600;padding:1px 6px;border-radius:6px}
 .lp .tx{min-width:0;flex:1}
 .lp .tx b{display:block;font-size:14px;font-weight:600;color:var(--brand-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lp .tx span{display:block;font-size:12px;color:var(--faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -307,12 +310,12 @@ label.ck input{accent-color:var(--brand);margin:0}
 .lp .ok svg{width:14px;height:14px}
 .lp .ok.live{background:#E5323F;color:#fff}
 .lp .ok.live i{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 1.3s infinite}
-.lp.bad{background:#FDECEC;color:#A12A2A;font-size:13px;padding:10px 12px}
+.lp.bad{background:#FEF2F2;border:1px solid #FEE2E2;color:#DC2626;font-size:13px;padding:10px 12px}
 .lp.bad>span{flex:1;min-width:0}
-.lp.bad b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#7A1F1F}
+.lp.bad b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#B91C1C}
 .lp.wait .rm{margin-left:auto}
 .lp.bad svg{width:16px;height:16px;flex:none}
-.lp.wait .th,.sk{background:linear-gradient(90deg,#EFE7E1 0%,#F8F3EF 50%,#EFE7E1 100%);background-size:200% 100%;animation:shimmer 1.2s linear infinite}
+.lp.wait .th,.sk{background:linear-gradient(90deg,#F1F5F9 0%,#F8FAFC 50%,#F1F5F9 100%);background-size:200% 100%;animation:shimmer 1.2s linear infinite}
 .sk{display:block;height:10px;border-radius:6px;margin:4px 0}
 .lp{position:relative;overflow:hidden}
 .lp .th video{width:100%;height:100%;object-fit:cover;display:block}
@@ -327,30 +330,30 @@ label.ck input{accent-color:var(--brand);margin:0}
 .addrow svg{width:16px;height:16px}
 .addrow span{margin-left:auto;font-weight:500;color:var(--faint);font-size:12px}
 @media (max-width:560px){.lp .th{width:88px}.lp .ok{display:none}}
-.btn.primary:disabled{background:#F3E7DD;color:#B9A597;cursor:not-allowed}
+.btn.primary:disabled{background:#E2E8F0;color:#94A3B8;box-shadow:none;cursor:not-allowed}
 @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 @keyframes spin{to{transform:rotate(360deg)}}
-.working{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--brand);background:rgba(255,139,51,.14);padding:2px 8px 2px 6px;border-radius:999px}
+.working{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--brand);background:rgba(37,99,235,.12);padding:2px 8px 2px 6px;border-radius:999px}
 .working i{width:10px;height:10px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
-.nav-item.on .working{background:rgba(42,26,18,.14);color:var(--brand-ink)}
+.nav-item.on .working{background:rgba(255,255,255,.25);color:#FFFFFF}
 .app.mini .nav-item .working{display:none}
 
 /* custom dropdown: a dark panel, no border or shadow needed against the white */
 .pick{position:relative}
 .pick .car{width:13px;height:13px;transition:transform .15s ease}
 .pick.open .car{transform:rotate(180deg)}
-.pick-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:30;min-width:230px;max-height:280px;overflow:auto;background:#2A1A12;border-radius:12px;padding:6px;
+.pick-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:30;min-width:230px;max-height:280px;overflow:auto;background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:6px;box-shadow:0 12px 28px -4px rgba(0,0,0,0.3);
   opacity:0;visibility:hidden;transform:translateY(-6px);pointer-events:none;transition:opacity .18s ease,transform .18s ease,visibility .18s}
 .pick.open .pick-menu{opacity:1;visibility:visible;transform:none;pointer-events:auto}
-.pick-opt{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;background:transparent;color:#E9DED6;border-radius:8px;font-size:13px;font-weight:500;text-align:left;cursor:pointer;transition:background-color .15s ease,color .15s ease}
-.pick-opt:hover,.pick-opt:focus-visible{background:rgba(255,255,255,.08);color:#fff}
-.pick-new{display:flex;align-items:center;gap:10px;width:100%;margin-top:4px;padding:8px 10px;border:0;border-top:1px solid rgba(255,255,255,.08);border-radius:0 0 8px 8px;background:transparent;color:#FFB27A;font-size:13px;font-weight:600;text-align:left;cursor:pointer;transition:background-color .15s ease,color .15s ease}
-.pick-new:hover,.pick-new:focus-visible{background:rgba(255,139,51,.14);color:#FFC79D}
-.pick-new .av{background:rgba(255,139,51,.18)}
-.pick-empty{margin:6px 10px 4px;font-size:12px;line-height:1.45;color:#B9A597}
+.pick-opt{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;background:transparent;color:#E2E8F0;border-radius:8px;font-size:13px;font-weight:500;text-align:left;cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.pick-opt:hover,.pick-opt:focus-visible{background:rgba(255,255,255,.1);color:#fff}
+.pick-new{display:flex;align-items:center;gap:10px;width:100%;margin-top:4px;padding:8px 10px;border:0;border-top:1px solid rgba(255,255,255,.08);border-radius:0 0 8px 8px;background:transparent;color:#60A5FA;font-size:13px;font-weight:600;text-align:left;cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.pick-new:hover,.pick-new:focus-visible{background:rgba(37,99,235,.15);color:#93C5FD}
+.pick-new .av{background:rgba(37,99,235,.2)}
+.pick-empty{margin:6px 10px 4px;font-size:12px;line-height:1.45;color:#94A3B8}
 img.av{object-fit:cover}
-.pick-opt .av,.pick-new .av{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:11px;font-weight:700;background:rgba(255,139,51,.18);color:#FFB27A}
+.pick-opt .av,.pick-new .av{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:11px;font-weight:700;background:rgba(37,99,235,.18);color:#60A5FA}
 .pick-new .av svg,.pick-opt .av svg{width:14px;height:14px}
 .pick-opt .tick{margin-left:auto;width:15px;height:15px;color:var(--brand);visibility:hidden}
 .pick-opt[aria-selected=true] .tick{visibility:visible}
@@ -358,12 +361,12 @@ img.av{object-fit:cover}
 
 /* options panel */
 .og{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.ob{background:var(--muted);border-radius:12px;padding:12px 14px 14px;min-width:0}
+.ob{background:var(--muted);border:1px solid var(--line);border-radius:12px;padding:12px 14px 14px;min-width:0}
 .composer.compact .ob{background:#fff}
 .ob.wide{grid-column:1/-1}
 .ot{font-size:12px;font-weight:600;color:var(--dim);margin-bottom:10px}
 .nsteps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.nstep{display:flex;flex-direction:column;gap:6px;background:#fff;border-radius:10px;padding:10px 10px 8px}
+.nstep{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 10px 8px}
 .composer.compact .nstep{background:var(--muted)}
 .nstep>span{font-size:12px;color:var(--faint)}
 .nstep .ctl{display:flex;align-items:center;gap:6px}
@@ -375,27 +378,27 @@ img.av{object-fit:cover}
 .nstep input::-webkit-inner-spin-button,.nstep input::-webkit-outer-spin-button,.range input::-webkit-inner-spin-button,.range input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .nstep .ctl i{font-style:normal;font-size:12px;color:var(--faint);width:10px}
 .tiles3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.tile-o{display:flex;flex-direction:column;gap:7px;padding:6px 6px 8px;border:0;border-radius:10px;background:#fff;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:background-color .15s ease,color .15s ease}
+.tile-o{display:flex;flex-direction:column;gap:7px;padding:6px 6px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:background-color .15s ease,color .15s ease}
 .composer.compact .tile-o{background:var(--muted)}
-.tile-o:hover,.tile-o:focus-visible{background:#EDE3DB;color:var(--text)}
-.tile-o[aria-pressed=true]{background:var(--brand-soft);color:var(--brand-ink)}
-.cap-prev{height:54px;border-radius:7px;background:#1E1612;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;font-size:14px;line-height:1;color:#fff;letter-spacing:0;-webkit-text-stroke:1px #000;paint-order:stroke fill}
+.tile-o:hover,.tile-o:focus-visible{background:#F1F5F9;color:var(--text)}
+.tile-o[aria-pressed=true]{background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand)}
+.cap-prev{height:54px;border-radius:7px;background:#0F172A;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;font-size:14px;line-height:1;color:#fff;letter-spacing:0;-webkit-text-stroke:1px #000;paint-order:stroke fill}
 .cap-prev b{font-weight:inherit}
-.lay-prev{height:54px;border-radius:7px;background:#1E1612;display:grid;place-items:center}
-.lay-prev .ph{position:relative;width:28px;height:48px;border-radius:4px;overflow:hidden;background:#4A3428}
-.lay-prev .ph::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,#B4643A,#5E3A2A);filter:blur(3px);opacity:.75}
-.lay-prev .ph i{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:16px;background:linear-gradient(135deg,#FF8B33,#FFB27A)}
+.lay-prev{height:54px;border-radius:7px;background:#0F172A;display:grid;place-items:center}
+.lay-prev .ph{position:relative;width:28px;height:48px;border-radius:4px;overflow:hidden;background:#1E293B}
+.lay-prev .ph::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,#2563EB,#0F172A);filter:blur(3px);opacity:.75}
+.lay-prev .ph i{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:16px;background:linear-gradient(135deg,#3B82F6,#60A5FA)}
 .lay-prev.zoom .ph i{left:-6px;right:-6px;height:24px}
 .lay-prev.crop .ph i{left:0;right:0;top:0;height:100%;transform:none}
-.seg{display:flex;gap:4px;background:#fff;border-radius:10px;padding:4px}
+.seg{display:flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px}
 .composer.compact .seg{background:var(--muted)}
 .seg button{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 6px;border:0;border-radius:7px;background:transparent;color:var(--dim);font-size:13px;font-weight:600;cursor:pointer;transition:background-color .15s ease,color .15s ease}
 .seg button small{font-size:11px;font-weight:500;color:var(--faint);transition:color .15s ease}
-.seg button:hover,.seg button:focus-visible{background:#EDE3DB;color:var(--text)}
-.seg button[aria-pressed=true]{background:var(--brand-soft);color:var(--brand-ink)}
-.seg button[aria-pressed=true] small{color:#B8693A}
+.seg button:hover,.seg button:focus-visible{background:#F1F5F9;color:var(--text)}
+.seg button[aria-pressed=true]{background:var(--brand-soft);color:var(--brand)}
+.seg button[aria-pressed=true] small{color:var(--brand-deep)}
 .range{display:flex;align-items:center;gap:8px}
-.range label{flex:1;display:flex;align-items:center;gap:6px;background:#fff;border-radius:10px;padding:0 10px;height:44px;font-size:12px;color:var(--faint);min-width:0}
+.range label{flex:1;display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:0 10px;height:44px;font-size:12px;color:var(--faint);min-width:0}
 .composer.compact .range label{background:var(--muted)}
 .range input,.range input:focus{flex:1;min-width:0;height:40px;border:0;background:transparent;padding:0;font-size:15px;font-weight:600;color:var(--brand-ink);-moz-appearance:textfield}
 .range>svg{width:14px;height:14px;color:var(--faint);flex:none}
@@ -777,7 +780,7 @@ dialog[open]{animation:fadein .16s ease}
 .tr-grow{flex:1}
 .tr-back{width:40px;height:40px;border-radius:var(--r);border:0;background:var(--muted);color:var(--brand-ink);display:grid;place-items:center;cursor:pointer;flex:none;transition:background-color .15s ease,opacity .2s ease}
 .tr-back svg{transform:rotate(180deg)}
-.tr-back:hover{background:#EDE3DB}
+.tr-back:hover{background:#F1F5F9}
 .tr-back[disabled]{opacity:0;pointer-events:none}
 .tr-foot .btn{height:40px;padding:0 16px}
 @keyframes tr-in{from{opacity:0;transform:translateY(6px)}}
@@ -813,7 +816,7 @@ dialog[open]{animation:fadein .16s ease}
 <body>
 <div class="app" id="app">
   <aside class="side" aria-label="Sidebar">
-    <div class="side-head"><img class="logo" src="/brand/logo-light.svg" alt="PeakCut"><img class="mark" src="/brand/favicon.svg" alt="PeakCut">
+    <div class="side-head"><img class="logo" src="/brand/logo-light.svg" alt="NovaCut"><img class="mark" src="/brand/favicon.svg" alt="NovaCut">
       <button class="icon-btn collapse" data-act="collapse" id="collapseBtn" aria-label="Collapse sidebar"></button></div>
     <nav class="nav" id="nav" aria-label="Main"></nav>
     <div class="side-foot" id="foot"></div>
@@ -934,15 +937,15 @@ function startTour() {
   if (S.view !== "overview") go("overview");
   // sel: what the step points at.  side: it lives in the sidebar (opened for the step on phones).  dock: where the card sits on phones.
   const steps = [
-    {t: "Welcome to PeakCut", x: "Long videos and live streams go in, captioned vertical clips come out. Here is a quick look around.",
+    {t: "Welcome to NovaCut", x: "Long videos and live streams go in, captioned vertical clips come out. Here is a quick look around.",
      chips: [["link", "Paste a link"], ["scissors", "Get clips", 1], ["radio", "Live streams"], ["send", "Post them"]]},
-    {t: "Start with any video", x: "Paste a YouTube, Twitch or Kick link here, or upload a file. PeakCut finds the best moments and makes each one a short with captions.",
+    {t: "Start with any video", x: "Paste a YouTube, Twitch or Kick link here, or upload a file. NovaCut finds the best moments and makes each one a short with captions.",
      sel: "#addform", dock: "bottom", chips: [["link", "YouTube"], ["link", "Twitch"], ["link", "Kick"], ["up", "Upload", 1]]},
     {t: "Your day at a glance", x: "Home shows what is recording, how many clips were made and posted today, and what is waiting to go out.",
      sel: "#ov .tiles", dock: "bottom", chips: [["radio", "Recording"], ["scissors", "Clips today", 1], ["send", "Posted"], ["clock", "Waiting"]]},
     {t: "Every video in one place", x: "All videos lists everything you have processed. Open a video to see its clips, trim them, change the captions or download them.",
      sel: '#nav [data-v="library"]', side: 1, dock: "bottom", chips: [["film", "All videos", 1], ["play", "Preview"], ["sliders", "Edit"], ["down", "Download"]]},
-    {t: "Add the creators you clip", x: "Give each creator a workspace with their channels. PeakCut can record them when they go live and clip the highlights as they happen.",
+    {t: "Add the creators you clip", x: "Give each creator a workspace with their channels. NovaCut can record them when they go live and clip the highlights as they happen.",
      sel: '#nav [data-act="newcreator"]', side: 1, dock: "bottom", chips: [["plusc", "New creator", 1], ["radio", "Record live"], ["bolt", "Clip highlights"]]},
     {t: "The AI picks the moments", x: "This shows which AI this server uses and how much it has worked today. Open it to see what the AI was used for.",
      sel: "#foot .ai-card", side: 1, dock: "top", chips: [["bolt", "AI", 1], ["chart", "See usage"]]},
@@ -1098,7 +1101,7 @@ function drawStream() {
     pl.dataset.src = src;
     const ipHost = /^[\d.]+$|^\[/.test(location.hostname);
     pl.innerHTML = k === "twitch" && ipHost
-      ? `<div class="noembed">${platLogo(k)}<b>Twitch only plays inside sites with a web address</b><span>It will play here once PeakCut is on its domain, or open PeakCut at localhost instead of ${esc(location.hostname)}.</span><a class="btn sm" href="${esc(p.channel)}" target="_blank" rel="noopener">Watch on Twitch ${ic("upright")}</a></div>`
+      ? `<div class="noembed">${platLogo(k)}<b>Twitch only plays inside sites with a web address</b><span>It will play here once NovaCut is on its domain, or open NovaCut at localhost instead of ${esc(location.hostname)}.</span><a class="btn sm" href="${esc(p.channel)}" target="_blank" rel="noopener">Watch on Twitch ${ic("upright")}</a></div>`
       : src ? `<iframe src="${src}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${PLAT[k].name} live stream"></iframe>` : "";
   }
   const stats = [p.viewers != null ? [fmtK(p.viewers), "watching"] : null, p.started ? [since(p.started), "live for"] : null,
@@ -1110,7 +1113,7 @@ function drawStream() {
     ${stats.length ? `<div class="sstats">${stats.map(([v, l]) => `<div><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("")}</div>` : ""}
     <div class="cta">${rec
       ? `<button class="btn danger" data-act="stoplive" data-j="${esc(rec)}">${ic("stop")}Stop recording</button><small>Recording now. Clips appear below as they're made.</small>`
-      : `<button class="btn primary" data-act="golive" data-url="${esc(p.channel)}"><span class="rdot"></span>Record this stream</button><small>PeakCut watches it and clips the best moments as they happen.</small>`}</div>`);
+      : `<button class="btn primary" data-act="golive" data-url="${esc(p.channel)}"><span class="rdot"></span>Record this stream</button><small>NovaCut watches it and clips the best moments as they happen.</small>`}</div>`);
 }
 function liveOn(c) { return Object.entries(c.profiles || {}).filter(([k, p]) => p.live && c.channels?.[k] === p.channel).sort(([, p]) => p.channel === c.channel ? -1 : 1); }
 function statusBadge(c) {
@@ -1217,15 +1220,15 @@ async function openFeedback(kind = "bug", context = "") {
 }
 function updateHow() {
   const up = S.status?.update, d = $("#formdlg"); if (!up || d.open) return;
-  const ai = "Update this PeakCut folder to the latest version from GitHub (git pull), keep my .env and data folder as they are, install any new requirements, and restart PeakCut.";
+  const ai = "Update this NovaCut folder to the latest version from GitHub (git pull), keep my .env and data folder as they are, install any new requirements, and restart NovaCut.";
   const cmd = (label, text) => `<h3>${label}</h3><div class="cmd"><code>${esc(text)}</code><button class="btn sm" type="button" data-act="copytext" data-t="${esc(text)}">${ic("copy")}Copy</button></div>`;
-  d.innerHTML = `<form method="dialog" class="dlg upd"><h2>${up.restart ? "The new version is ready" : "A new version of PeakCut is out"}</h2>
-    <p class="help">${up.restart ? "The new files are already in the PeakCut folder. <b>Close PeakCut and start it again</b> to use them." : `You're on <b>${esc(up.current)}</b>. ${up.behind ? `${up.behind} update${up.behind === 1 ? " has" : "s have"} been added since.` : "Newer changes have been added since."}`} Your settings, keys and clips stay as they are.</p>
+  d.innerHTML = `<form method="dialog" class="dlg upd"><h2>${up.restart ? "The new version is ready" : "A new version of NovaCut is out"}</h2>
+    <p class="help">${up.restart ? "The new files are already in the NovaCut folder. <b>Close NovaCut and start it again</b> to use them." : `You're on <b>${esc(up.current)}</b>. ${up.behind ? `${up.behind} update${up.behind === 1 ? " has" : "s have"} been added since.` : "Newer changes have been added since."}`} Your settings, keys and clips stay as they are.</p>
     ${up.notes.length ? `<ul>${up.notes.map(n => `<li>${esc(n.title)} <small>${esc(n.date)}</small></li>`).join("")}</ul>` : ""}
-    ${up.restart ? "" : cmd("Ask your AI coding assistant (Claude, Cursor, Copilot...)", ai) + cmd("Or run it yourself, in the PeakCut folder", "git pull && pip install -r requirements.txt")}
-    <p class="sub">${up.restart ? "" : "Then stop PeakCut and start it again. With Docker, run <code>git pull && docker compose up -d --build</code> instead. "}<a class="lnk" href="${esc(up.url)}" target="_blank" rel="noopener">See every change on GitHub</a></p>
+    ${up.restart ? "" : cmd("Ask your AI coding assistant (Claude, Cursor, Copilot...)", ai) + cmd("Or run it yourself, in the NovaCut folder", "git pull && pip install -r requirements.txt")}
+    <p class="sub">${up.restart ? "" : "Then stop NovaCut and start it again. With Docker, run <code>git pull && docker compose up -d --build</code> instead. "}<a class="lnk" href="${esc(up.url)}" target="_blank" rel="noopener">See every change on GitHub</a></p>
     <div class="dlg-foot"><button class="btn" value="later">Remind me next version</button><button class="btn primary" value="ok" autofocus>Got it</button></div></form>`;
-  d.onclose = () => { if (d.returnValue === "later") { try { localStorage.setItem("peakcut_update_seen", up.latest); } catch {} drawShell(); } };
+  d.onclose = () => { if (d.returnValue === "later") { try { localStorage.setItem("novacut_update_seen", up.latest); } catch {} drawShell(); } };
   d.returnValue = "ok"; d.showModal();
 }
 function greeting() { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; }
@@ -1280,19 +1283,19 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
   }
   if (S.view === "overview" || S.view === "library") {
     const L = S.status.links || {};
-    act = (L.repo ? `<a class="btn" href="${esc(L.repo)}" target="_blank" rel="noopener" title="Star PeakCut on GitHub">${ic("github")}<span>Star<span class="long"> on GitHub</span></span></a>` : "")
-        + (L.follow ? `<a class="btn primary" href="${esc(L.follow)}" target="_blank" rel="noopener" title="Follow the maker of PeakCut on Instagram">${ic("instagram")}Follow me</a>` : "");
+    act = (L.repo ? `<a class="btn" href="${esc(L.repo)}" target="_blank" rel="noopener" title="Star NovaCut on GitHub">${ic("github")}<span>Star<span class="long"> on GitHub</span></span></a>` : "")
+        + (L.follow ? `<a class="btn primary" href="${esc(L.follow)}" target="_blank" rel="noopener" title="Follow the maker of NovaCut on Instagram">${ic("instagram")}Follow me</a>` : "");
   }
   const me = S.status.user;
   const kk = S.status.ai;
   const up = S.status.update;
   let upSeen = "";
-  try { upSeen = localStorage.getItem("peakcut_update_seen") || ""; } catch {}
-  const upBar = up && up.latest !== upSeen ? `<div class="vb" role="status">${ic("up")}<span>${up.restart ? "<b>The new version is downloaded.</b> Close PeakCut and start it again to use it." : `A new version of PeakCut is out${up.behind ? `: <b>${up.behind} update${up.behind === 1 ? "" : "s"}</b> since yours` : ""}.`}</span>
+  try { upSeen = localStorage.getItem("novacut_update_seen") || ""; } catch {}
+  const upBar = up && up.latest !== upSeen ? `<div class="vb" role="status">${ic("up")}<span>${up.restart ? "<b>The new version is downloaded.</b> Close NovaCut and start it again to use it." : `A new version of NovaCut is out${up.behind ? `: <b>${up.behind} update${up.behind === 1 ? "" : "s"}</b> since yours` : ""}.`}</span>
     <button class="btn sm primary" data-act="updhow">${up.restart ? "What's new" : "How to update"}</button><button class="btn sm ghost" data-act="updlater" aria-label="Hide until the next version">Later</button></div>` : "";
-  const toolBar = S.status.no_ffmpeg ? `<div class="vb" role="alert">${ic("warn")}<span><b>PeakCut can't make clips yet: ffmpeg isn't installed on this computer.</b> Open a terminal, run <code>winget install Gyan.FFmpeg</code> (Mac: <code>brew install ffmpeg</code>, Linux: <code>sudo apt install ffmpeg</code>), then close PeakCut and start it again.</span></div>` : "";
+  const toolBar = S.status.no_ffmpeg ? `<div class="vb" role="alert">${ic("warn")}<span><b>NovaCut can't make clips yet: ffmpeg isn't installed on this computer.</b> Open a terminal, run <code>winget install Gyan.FFmpeg</code> (Mac: <code>brew install ffmpeg</code>, Linux: <code>sudo apt install ffmpeg</code>), then close PeakCut and start it again.</span></div>` : "";
   const aiBar = !toolBar && S.status.ai?.problem && me?.is_admin && S.view !== "settings" ? `<div class="vb" role="status">${ic("warn")}<span><b>The AI isn't answering.</b> ${esc(S.status.ai.problem)} Until then, clips are picked by loudness.</span><button class="btn sm primary" data-act="go" data-v="settings" data-tab="ai">Open AI settings</button></div>` : "";
-  const diskBar = !toolBar && S.status.disk_full && S.view !== "settings" ? `<div class="vb" role="alert">${ic("warn")}<span><b>The drive PeakCut saves to is almost full, so it can't take new videos.</b> Free up space on it, or move PeakCut's folder to a bigger drive.</span>${me?.is_admin ? `<button class="btn sm primary" data-act="go" data-v="settings" data-tab="storage">Open Storage</button>` : ""}</div>` : "";
+  const diskBar = !toolBar && S.status.disk_full && S.view !== "settings" ? `<div class="vb" role="alert">${ic("warn")}<span><b>The drive NovaCut saves to is almost full, so it can't take new videos.</b> Free up space on it, or move NovaCut's folder to a bigger drive.</span>${me?.is_admin ? `<button class="btn sm primary" data-act="go" data-v="settings" data-tab="storage">Open Storage</button>` : ""}</div>` : "";
   put($("#vbanner"), toolBar ? toolBar : diskBar ? diskBar : aiBar ? aiBar : upBar ? upBar : me && me.verified === false ? `<div class="vb" role="status">${ic("warn")}<span>Confirm your email to start clipping. We sent a link to <b>${esc(me.email)}</b>.</span><button class="btn sm" data-act="resendverify">Send a new link</button></div>`
     : kk && kk.ready === false && S.view !== "usage" ? `<div class="vb" role="status">${ic("bolt")}<span>${me?.is_admin ? "Add your AI key to let the AI pick clips and write titles. Until then, clips are picked by loudness." : "The AI isn't set up on this server yet, so clips are picked by loudness."}</span>${me?.is_admin && S.view !== "settings" ? `<button class="btn sm primary" data-act="go" data-v="settings" data-tab="ai">${ic("plus")}Add AI key</button>` : ""}</div>` : "");
   put($("#tpic"), pic); $("#tpic").classList.toggle("live", !!(c && (c.live_job || liveOn(c).length)));
@@ -1522,7 +1525,7 @@ async function lookUp(u) {
     if (e instanceof TypeError) {           // the request itself dropped (network blip): try once more quietly
       await new Promise(r => setTimeout(r, 800));
       try { return await api("/api/preview?url=" + encodeURIComponent(u)); }
-      catch (e2) { throw new Error(e2 instanceof TypeError ? "Couldn't reach PeakCut to check that link. Check your connection and paste it again." : e2.message); }
+      catch (e2) { throw new Error(e2 instanceof TypeError ? "Couldn't reach NovaCut to check that link. Check your connection and paste it again." : e2.message); }
     }
     throw e;
   }
@@ -1929,7 +1932,7 @@ function drawOverview() {
         ${barChart(o.daily || [])}</div>
       ${aiCard()}
     </div>
-    ${steps.length ? `<div class="card"><div class="card-head"><div><h2>Next steps</h2><p class="sub">Finish setting up PeakCut</p></div></div>
+    ${steps.length ? `<div class="card"><div class="card-head"><div><h2>Next steps</h2><p class="sub">Finish setting up NovaCut</p></div></div>
       <div class="steps across">${steps.map((x, i) => `<button class="step" data-act="step" data-to="${esc(x[2])}"><span class="n">${i + 1}</span><span><b>${esc(x[0])}</b><span class="d">${esc(x[1])}</span></span>${ic("arrowr")}</button>`).join("")}</div></div>` : ""}
     <div class="card"><div class="card-head"><div><h2>Creators</h2><p class="sub">Each creator's status and results</p></div></div>
       ${o.creators.length ? `<div class="scroll"><table><tr><th>Creator</th><th>Status</th><th>Auto-post</th><th class="num">Clips today</th><th class="num">Posted today</th><th class="num">Waiting</th><th class="num">Failed</th><th class="num">Views</th><th class="num">Est. $</th></tr>
@@ -2015,7 +2018,7 @@ async function drawSettings() {
   try {
     if (tab === "ai") {
       const k = S.ai = await api("/api/ai");
-      body.innerHTML = `<section class="set-sec"><h2>AI</h2><p class="help">PeakCut uses an AI model to pick the moments worth clipping and to write hooks, titles and captions. Use your own key from any of these services. You pay that service directly. Without a key, clips are picked by loudness.</p>
+      body.innerHTML = `<section class="set-sec"><h2>AI</h2><p class="help">NovaCut uses an AI model to pick the moments worth clipping and to write hooks, titles and captions. Use your own key from any of these services. You pay that service directly. Without a key, clips are picked by loudness.</p>
           <div class="ai-state">${k.ready ? `<span class="pill ok">${ic("check")}Ready</span><span class="sub">${esc(k.label)} · ${esc(k.models[0] || "")}</span>` : `<span class="pill warn">Not set up</span><span class="sub">Choose a service, paste your key and pick a model.</span>`}</div>
           <div class="ai-form">
             <label class="f">AI service<select id="ai_provider">${k.providers.map(x => `<option value="${esc(x.id)}" ${x.id === k.provider ? "selected" : ""}>${esc(x.label)}</option>`).join("")}</select></label>
@@ -2029,7 +2032,7 @@ async function drawSettings() {
     }
     if (tab === "profile") {
       const joined = me.created_at ? new Date(me.created_at * 1000).toLocaleDateString([], {day: "numeric", month: "long", year: "numeric"}) : "";
-      body.innerHTML = `<section class="set-sec"><h2>Profile</h2><p class="help">This is how you appear in PeakCut.</p>
+      body.innerHTML = `<section class="set-sec"><h2>Profile</h2><p class="help">This is how you appear in NovaCut.</p>
         <div class="prof">${meAvatar(me).replace('class="avatar me-pic"', 'class="avatar prof-pic"')}<div><b>${esc(me.name)}</b><span>${esc(me.email)}</span></div></div>
         <dl class="kv"><div><dt>Email</dt><dd>${esc(me.email)} ${me.verified === false ? `<span class="pill warn">Not confirmed</span>` : `<span class="pill ok">Confirmed</span>`}</dd></div>
           <div><dt>Sign-in method</dt><dd>${me.google ? `Google${me.has_password ? " and password" : ""}` : "Email and password"}</dd></div>
@@ -2043,7 +2046,7 @@ async function drawSettings() {
             <label class="f">${me.has_password ? "New password" : "Password"}<input id="pw_new" type="password" autocomplete="new-password" placeholder="At least 8 characters"></label></div>
           <div class="row" style="margin-top:14px"><button class="btn primary" data-act="pwsave">${me.has_password ? "Change password" : "Set password"}</button>
             ${me.has_password ? `<a class="btn ghost" href="/reset">Forgot it?</a>` : ""}</div></section>
-        <section class="set-sec"><h2>Sessions</h2><p class="help">Sign out of PeakCut on this device. Changing your password signs out every other device too.</p>
+        <section class="set-sec"><h2>Sessions</h2><p class="help">Sign out of NovaCut on this device. Changing your password signs out every other device too.</p>
           <button class="btn" data-act="logout">${ic("signout")}Sign out</button></section>
         <section class="set-sec"><h2 style="color:var(--bad)">Delete account</h2><p class="help">Removes your account and everything in it for good: creators, recordings, videos, clips and history.</p>
           <button class="btn danger" data-act="delaccount">${ic("trash")}Delete my account</button></section>`;
@@ -2052,16 +2055,16 @@ async function drawSettings() {
       const s = S.stor = await api("/api/storage");
       const usedPct = s.total_gb ? Math.min(100, Math.max(1, 100 * (s.total_gb - s.free_gb) / s.total_gb)) : 0;
       const gb = n => `${Number(n).toLocaleString(undefined, {maximumFractionDigits: 1})} GB`;
-      body.innerHTML = `<section class="set-sec"><h2>Storage</h2><p class="help">Everything PeakCut keeps is in one folder: your videos, clips, recordings, creators and settings. You can open it, back it up, or move it to a drive with more room.</p>
-          ${s.full ? `<div class="note" style="margin:0 0 14px">${ic("warn")}<span><b>This drive is almost full, so PeakCut can't take new videos.</b> ${gb(s.free_gb)} free on ${esc(s.drive)}; it needs at least ${gb(s.min_free_gb)}. Free up space, or move the folder to another drive below.</span></div>` : ""}
-          ${s.pending ? `<div class="note" style="margin:0 0 14px">${ic("clock")}<span><b>The folder changes to ${esc(s.pending)} the next time PeakCut starts.</b> Close PeakCut and start it again. <button class="btn sm ghost" data-act="storcancel">Undo</button></span></div>` : ""}
+      body.innerHTML = `<section class="set-sec"><h2>Storage</h2><p class="help">Everything NovaCut keeps is in one folder: your videos, clips, recordings, creators and settings. You can open it, back it up, or move it to a drive with more room.</p>
+          ${s.full ? `<div class="note" style="margin:0 0 14px">${ic("warn")}<span><b>This drive is almost full, so NovaCut can't take new videos.</b> ${gb(s.free_gb)} free on ${esc(s.drive)}; it needs at least ${gb(s.min_free_gb)}. Free up space, or move the folder to another drive below.</span></div>` : ""}
+          ${s.pending ? `<div class="note" style="margin:0 0 14px">${ic("clock")}<span><b>The folder changes to ${esc(s.pending)} the next time NovaCut starts.</b> Close NovaCut and start it again. <button class="btn sm ghost" data-act="storcancel">Undo</button></span></div>` : ""}
           <div class="stor-path"><code>${esc(s.path)}</code>${s.local ? `<button class="btn" data-act="storopen">${ic("folder")}Open folder</button>` : ""}</div>
           <div class="stor-bar ${s.full ? "low" : ""}" role="img" aria-label="${Math.round(usedPct)}% of the drive is used"><i style="width:${usedPct}%"></i></div>
-          <div class="stor-nums"><span>PeakCut uses <b>${gb(s.used_gb)}</b></span><span><b>${gb(s.free_gb)}</b> free of ${gb(s.total_gb)} on ${esc(s.drive)}</span></div>
+          <div class="stor-nums"><span>NovaCut uses <b>${gb(s.used_gb)}</b></span><span><b>${gb(s.free_gb)}</b> free of ${gb(s.total_gb)} on ${esc(s.drive)}</span></div>
           ${s.fixed ? `<p class="sub" style="margin-top:16px">This folder is set with PEAKCUT_DATA in the .env file. Change it there, or remove that line to choose it here.</p>`
             : S.storOpen ? `<div class="stor-change"><label class="f">New folder<span class="with"><input id="stor_new" placeholder="For example D:\\PeakCut" spellcheck="false" value="${esc(S.storNew || "")}">${s.local ? `<button class="btn" type="button" data-act="storpick">Browse</button>` : ""}</span></label>
                 <label class="ck"><input type="checkbox" id="stor_move" checked>Move everything that is in the current folder there too</label>
-                <p class="sub">The change happens the next time PeakCut starts, so nothing is moved while a video is being made.</p>
+                <p class="sub">The change happens the next time NovaCut starts, so nothing is moved while a video is being made.</p>
                 <div class="row"><button class="btn primary" data-act="storsave">Use this folder</button><button class="btn ghost" data-act="storchange">Cancel</button></div></div>`
             : `<div class="row" style="margin-top:16px"><button class="btn" data-act="storchange">Change folder</button></div>`}</section>`;
     }
@@ -2099,7 +2102,7 @@ async function drawSettings() {
             <p class="sub">To let people connect ${name}, register this server once with <a href="${g[0]}" target="_blank" rel="noopener">${g[1]}</a>. It takes about five minutes.</p>
             <ol>${g[2].map(x => `<li>${x}</li>`).join("")}</ol>
             <div class="copyrow"><code>${esc(st.redirect)}</code><button class="btn sm" data-act="copytext" data-t="${esc(st.redirect)}">${ic("copy")}Copy</button></div>
-            ${!st.https && pf !== "youtube" ? `<p class="warnline">${name} only accepts https addresses. Put PeakCut on a domain with https (or a tunnel) and set PEAKCUT_PUBLIC_URL to it first.</p>` : ""}
+            ${!st.https && pf !== "youtube" ? `<p class="warnline">${name} only accepts https addresses. Put NovaCut on a domain with https (or a tunnel) and set PEAKCUT_PUBLIC_URL to it first.</p>` : ""}
             <div class="fields"><label class="f">${esc(st.id_label)}<input id="app_id" placeholder="${st.ready ? "Saved: " + esc(st.id_hint) + ". Paste a new one to replace it" : ""}" autocomplete="off" spellcheck="false"></label>
               <label class="f">${esc(st.secret_label)}<input id="app_secret" type="password" placeholder="${st.ready ? "Saved. Paste a new one to replace it" : ""}" autocomplete="off"></label></div>
             <p class="sub">${g[3]}</p>
@@ -2107,7 +2110,7 @@ async function drawSettings() {
         return `<div class="appcard"><span class="applogo" style="background:${bg}">${logo}</span>
           <div class="apptx"><b>${name}</b><span>${desc}</span>${listOf(accs)}</div><div class="appact">${act}</div>${panel}</div>`;
       };
-      body.innerHTML = `<section class="set-sec"><h2>Connected apps</h2><p class="help">Connect the accounts PeakCut posts clips to: press Connect, sign in on the platform's own page, and you're back here. PeakCut never sees your passwords. Then pick which accounts each creator posts to, in that creator's Setup.</p>
+      body.innerHTML = `<section class="set-sec"><h2>Connected apps</h2><p class="help">Connect the accounts NovaCut posts clips to: press Connect, sign in on the platform's own page, and you're back here. NovaCut never sees your passwords. Then pick which accounts each creator posts to, in that creator's Setup.</p>
         <div class="apps">
           ${card("youtube", "YouTube", yt, "#FF0000", "Post clips to your channel as Shorts.")}
           ${card("instagram", "Instagram", ig, "linear-gradient(45deg,#F58529,#DD2A7B,#8134AF)", "Post clips as Reels. Needs a Creator or Business account.")}
@@ -2397,7 +2400,7 @@ document.addEventListener("click", async e => {
     if (a === "tour") return startTour();
     if (a === "settab") { e.preventDefault(); S.stab = d.k; remember("settings", d.k); return drawSettings(); }
     if (a === "updhow") return updateHow();
-    if (a === "updlater") { try { localStorage.setItem("peakcut_update_seen", S.status.update?.latest || ""); } catch {} return drawShell(); }
+    if (a === "updlater") { try { localStorage.setItem("novacut_update_seen", S.status.update?.latest || ""); } catch {} return drawShell(); }
     if (a === "storopen") { await send("/api/storage/open"); return; }
     if (a === "storchange") { S.storOpen = !S.storOpen; S.storNew = ""; return drawSettings(); }
     if (a === "storpick") {
@@ -2407,7 +2410,7 @@ document.addEventListener("click", async e => {
     }
     if (a === "storsave") {
       const s = await send("/api/storage", {path: $("#stor_new").value, move: $("#stor_move").checked}, "PUT");
-      S.storOpen = false; toast("Saved. Close PeakCut and start it again to switch to the new folder.", "ok"); return drawSettings();
+      S.storOpen = false; toast("Saved. Close NovaCut and start it again to switch to the new folder.", "ok"); return drawSettings();
     }
     if (a === "storcancel") { await send("/api/storage", {cancel: true}, "PUT"); toast("Kept the current folder", "ok"); return drawSettings(); }
     if (a === "appsetup") { S.setupOpen = d.p && S.setupOpen !== d.p ? d.p : ""; return drawSettings(); }
@@ -2467,8 +2470,8 @@ $("#main").addEventListener("scroll", () => $(".topbar").classList.toggle("stuck
   await tick();
   { const [v, tab] = location.pathname.startsWith("/app/") ? fromPath(location.pathname) : ["overview", "clips"]; go(v, tab, true); remember(S.view, S.ctab, "replace"); }
   try {  // a link pasted on the home page before signing up
-    const link = sessionStorage.getItem("peakcut_link");
-    if (link) { sessionStorage.removeItem("peakcut_link"); go("overview"); $("#url").value = link; onLink($("#url")); $("#url").focus(); toast("Your link is ready. Press Make clips.", "ok"); }
+    const link = sessionStorage.getItem("novacut_link");
+    if (link) { sessionStorage.removeItem("novacut_link"); go("overview"); $("#url").value = link; onLink($("#url")); $("#url").focus(); toast("Your link is ready. Press Make clips.", "ok"); }
   } catch {}
   loop();
   if (S.status.tour && !$("#formdlg").open) setTimeout(startTour, 500);   // once, the first time someone signs in

@@ -89,11 +89,11 @@ def legal_page(request: Request):
         if contact
         else "the contact details on our website"
     )
-    name = _h.escape(config.LEGAL_NAME or "PeakCut")
+    name = _h.escape(config.LEGAL_NAME or "NovaCut")
     law = (
         f"the laws of {_h.escape(config.LEGAL_COUNTRY)}"
         if config.LEGAL_COUNTRY
-        else "the laws of the country where PeakCut's operator is established"
+        else "the laws of the country where NovaCut's operator is established"
     )
     out = _LEGAL_HTML or (WEB / "legal.html").read_text(encoding="utf-8")
     for k, v in {

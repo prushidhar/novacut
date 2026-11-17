@@ -1,5 +1,5 @@
 [project]
-name = "peakcut"
+name = "novacut"
 version = "0.1.0"
 description = "Turn long videos and live streams into captioned vertical clips"
 authors = [

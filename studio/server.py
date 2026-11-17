@@ -42,7 +42,7 @@ def _quiet(fn):
         print(f"  {e}", flush=True)
 
 
-app = FastAPI(title="PeakCut", docs_url=None, redoc_url=None, openapi_url=None)
+app = FastAPI(title="NovaCut", docs_url=None, redoc_url=None, openapi_url=None)
 
 OPEN = (
     "/api/auth/",
@@ -281,10 +281,10 @@ app.include_router(ws_routes.router)
 
 
 def main():
-    print(f"\n  PeakCut is running:  {config.PUBLIC_URL}\n")
+    print(f"\n  NovaCut is running:  {config.PUBLIC_URL}\n")
     if not config.ACCOUNTS and (config.HTTPS or config.HOST not in ("127.0.0.1", "localhost", "::1")):
         print(
-            "  Sign-in is off, so anyone who can reach this address can use PeakCut and its AI key.\n"
+            "  Sign-in is off, so anyone who can reach this address can use NovaCut and its AI key.\n"
             "  On a server other people can reach, set PEAKCUT_ACCOUNTS=1 in .env.\n",
             flush=True,
         )

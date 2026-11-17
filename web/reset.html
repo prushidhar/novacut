@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reset your PeakCut password</title>
-<meta name="description" content="Reset the password for your PeakCut account.">
+<title>Reset your NovaCut password</title>
+<meta name="description" content="Reset the password for your NovaCut account.">
 <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--brand:#FF8B33;--brand-hi:#FF9A4C;--ink:#2A1A12;--soft:#FFF2E8;--line-b:#FFD9BC;--deep:#A9480A;
-  --frame:#1E1612;--frame-2:#2C221D;--frame-text:#F4EEEA;--frame-dim:#A99A91;
-  --muted:#F7F4F1;--line:#EEE8E4;--line-2:#E1D9D3;--text:#211813;--dim:#6D6159;--faint:#A0948C;--bad:#D3343F;--bad-soft:#FDECEE;
+:root{--brand:#2563EB;--brand-hi:#1D4ED8;--ink:#0F172A;--soft:#EFF6FF;--line-b:#BFDBFE;--deep:#1E40AF;
+  --frame:#0B0F19;--frame-2:#161F30;--frame-text:#F8FAFC;--frame-dim:#94A3B8;
+  --muted:#F8FAFC;--line:#E2E8F0;--line-2:#CBD5E1;--text:#0F172A;--dim:#475569;--faint:#94A3B8;--bad:#D3343F;--bad-soft:#FDECEE;
   --r-lg:16px;--r:12px;--r-sm:8px;color-scheme:light}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -24,10 +24,10 @@ svg{width:18px;height:18px;flex:none;fill:currentColor}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:var(--r);border:1px solid var(--line-2);background:#fff;color:var(--text);
   font:inherit;font-weight:600;font-size:15px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background-color .15s ease,border-color .15s ease,color .15s ease}
-.btn:hover{background:var(--muted);border-color:#D4CAC3}
-.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--ink)}
+.btn:hover{background:var(--muted);border-color:#CBD5E1}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#FFFFFF}
 .btn.primary:hover{background:var(--brand-hi);border-color:var(--brand-hi)}
-.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}.btn.dark:hover{background:#3A2C25;border-color:#3A2C25}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}.btn.dark:hover{background:#1E293B;border-color:#1E293B}
 .btn.sm{height:38px;padding:0 14px;font-size:14px}
 .btn.lg{height:52px;padding:0 26px;font-size:16px}
 .btn:disabled{opacity:.5;cursor:default}
@@ -48,7 +48,7 @@ body{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,
 form{display:flex;flex-direction:column;gap:16px}
 label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:600;color:var(--dim)}
 input{height:46px;padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--line-2);background:#fff;font:inherit;color:var(--text);outline:none;transition:border-color .15s ease,background-color .15s ease}
-input:hover{border-color:#D4CAC3}input:focus{border-color:var(--brand);background:#fff}
+input:hover{border-color:#CBD5E1}input:focus{border-color:var(--brand);background:#fff}
 input:focus-visible{outline:none}
 input::placeholder{color:var(--faint)}
 .btn{width:100%;height:48px}
@@ -70,7 +70,7 @@ input::placeholder{color:var(--faint)}
 </head>
 <body>
 <aside class="side">
-  <a href="/" aria-label="PeakCut home"><img src="/brand/logo-light.svg" alt="PeakCut"></a>
+  <a href="/" aria-label="NovaCut home"><img src="/brand/logo-light.svg" alt="NovaCut"></a>
   <div>
     <h1>Clips from every stream, <em>without watching all of it.</em></h1>
     <ul>
@@ -79,10 +79,10 @@ input::placeholder{color:var(--faint)}
       <li><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg><span>Free and open source: runs on your own AI key</span></li>
     </ul>
   </div>
-  <small>© <span id="year"></span> PeakCut · <a href="/privacy" style="color:inherit">Privacy</a> · <a href="/terms" style="color:inherit">Terms</a></small>
+  <small>© <span id="year"></span> NovaCut · <a href="/privacy" style="color:inherit">Privacy</a> · <a href="/terms" style="color:inherit">Terms</a></small>
 </aside>
 <main class="main"><div class="card">
-  <a href="/"><img class="mobile-logo" src="/brand/logo.svg" alt="PeakCut"></a>
+  <a href="/"><img class="mobile-logo" src="/brand/logo.svg" alt="NovaCut"></a>
   <h2 id="h">Reset your password</h2><p id="p">Enter the email you signed up with and we'll send you a link to choose a new password.</p>
   <form id="ask" novalidate>
     <div class="err" id="err" role="alert"></div>

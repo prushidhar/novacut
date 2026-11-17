@@ -14,10 +14,10 @@ from pathlib import Path
 from typing import Any
 
 NEEDED = ("ffmpeg", "ffprobe")
-HELP = ("PeakCut needs ffmpeg to work on video, and it isn't installed on this computer yet. "
+HELP = ("NovaCut needs ffmpeg to work on video, and it isn't installed on this computer yet. "
         + ("Open a terminal and run:  winget install Gyan.FFmpeg" if sys.platform == "win32" else
            "Run:  brew install ffmpeg" if sys.platform == "darwin" else "Run:  sudo apt install ffmpeg")
-        + "  Then close PeakCut and start it again.")
+        + "  Then close NovaCut and start it again.")
 _seen: dict[str, Any] = {"at": 0.0, "missing": list(NEEDED)}
 
 
