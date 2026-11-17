@@ -59,7 +59,7 @@ If you prefer a file (or run a server), the same three things can go in `.env`. 
 
 ```ini
 PEAKCUT_AI_PROVIDER=gemini
-PEAKCUT_AI_MODELS=gemini-2.5-flash
+PEAKCUT_AI_MODELS=gemini-3.8-flash
 PEAKCUT_AI_KEY=your-key-here
 ```
 
