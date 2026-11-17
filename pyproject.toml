@@ -2,6 +2,9 @@
 name = "peakcut"
 version = "0.1.0"
 description = "Turn long videos and live streams into captioned vertical clips"
+authors = [
+  {name = "prushidhar", email = "prushidhar@gmail.com"}
+]
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"

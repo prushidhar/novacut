@@ -244,10 +244,19 @@ def save_thumb(job_dir: Path, url: str = "", video: Path = None) -> bool:
 
 def download_audio(url: str, job_dir: Path, on_progress=None) -> Path:
     """Audio only: a few seconds even for long videos, and all the AI needs to pick clips."""
+    last_p = -1.0
+    last_t = 0.0
+
     def hook(d):
+        nonlocal last_p, last_t
         total = d.get("total_bytes") or d.get("total_bytes_estimate")
         if on_progress and d.get("status") == "downloading" and total:
-            on_progress(d.get("downloaded_bytes", 0) / total)
+            p = d.get("downloaded_bytes", 0) / total
+            now = time.time()
+            if p - last_p >= 0.05 or (now - last_t >= 0.4) or p >= 0.99:
+                last_p = p
+                last_t = now
+                on_progress(p)
 
     with _youtube_guard(url), _ydl({"format": "ba[ext=m4a]/ba/worst", "outtmpl": str(job_dir / "audio_src.%(ext)s"),
                "progress_hooks": [hook]}) as ydl:

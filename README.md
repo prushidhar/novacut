@@ -27,7 +27,7 @@ You need Python 3.10 or newer and `ffmpeg`. On Windows: `winget install Gyan.FFm
 On Linux: `sudo apt install ffmpeg`. PeakCut finds it by itself and tells you in the dashboard if it is missing.
 
 ```bash
-git clone <this repository> peakcut
+git clone https://github.com/prushidhar/peakcut.git
 ```
 
 ```bash

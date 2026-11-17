@@ -175,7 +175,23 @@ def save(job):
             return
         tmp = d / "job.json.tmp"
         tmp.write_text(text, encoding="utf-8")
-        tmp.replace(d / "job.json")
+        target = d / "job.json"
+        for attempt in range(10):
+            try:
+                tmp.replace(target)
+                break
+            except (PermissionError, OSError):
+                if attempt == 9:
+                    try:
+                        target.write_text(text, encoding="utf-8")
+                        try:
+                            tmp.unlink(missing_ok=True)
+                        except OSError:
+                            pass
+                    except OSError:
+                        pass
+                    break
+                time.sleep(0.05 * (attempt + 1))
 
 
 def _set(job, **kw):

@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-_PATH = re.compile(r"(?:[A-Za-z]:)?[\\/][^\s'\"]*[\\/][^\s'\"]+")
+_PATH = re.compile(r"(?:[A-Za-z]:[\\/]|/)[^\r\n'\"]+|(?:[A-Za-z]:)?[\\/][^\s'\"]*[\\/][^\s'\"]+")
 
 
 def friendly(e: Exception | str | Any, limit: int = 600) -> str:
