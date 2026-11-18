@@ -80,7 +80,14 @@ def active_mine():
 
 
 def active_for(cid):
+    if not cid:
+        return None
     return next((s for s in active_mine() if s.job["creator"] == cid), None)
+
+
+def active_url(url: str):
+    u = normalize(url).rstrip("/").lower()
+    return next((s for s in active_mine() if normalize(s.job["source"].get("url") or "").rstrip("/").lower() == u), None)
 
 
 def mine(jid):
@@ -650,7 +657,7 @@ def start_session(creator: dict, url=None) -> dict:
     if len(active_mine()) >= config.MAX_LIVE_PER_USER:
         raise ValueError(f"You're already recording {len(active_mine())} streams, the most this server allows at once. Stop one first.")
     if len(active()) >= config.MAX_LIVE_TOTAL or (active() and load.busy()):
-        raise ValueError("PeakCut is recording as many streams as it can right now. Try again in a little while.")
+        raise ValueError("NovaCut is recording as many streams as it can right now. Try again in a little while.")
     from . import tools
     if tools.missing():
         raise ValueError(tools.HELP)
@@ -659,6 +666,45 @@ def start_session(creator: dict, url=None) -> dict:
     job.update(status="live", stage="Connecting to the stream")
     jobs.save(job)
     Session(job, creator).start()
+    return job
+
+
+def start_from_job(job: dict, meta: dict | None = None) -> dict:
+    """Turn a pasted live-stream link job into an active live clipping session."""
+    url = normalize(job["source"]["url"])
+    if not media.site_allowed(url):
+        raise ValueError("Channel links must be from YouTube, Twitch or Kick.")
+    if active_url(url):
+        raise ValueError("This live stream is already being recorded.")
+    cid = job.get("creator")
+    if cid and active_for(cid):
+        raise ValueError("This creator is already being recorded.")
+    if media.is_youtube(url) and media.youtube_paused():
+        raise ValueError(media.YT_BLOCKED.replace("download videos", "record YouTube streams")
+                         .replace("Upload the video file instead, or use a Twitch or Kick link. YouTube links",
+                                  "Twitch and Kick streams still work. YouTube"))
+    if len(active_mine()) >= config.MAX_LIVE_PER_USER:
+        raise ValueError(f"You're already recording {len(active_mine())} streams, the most this server allows at once. Stop one first.")
+    if len(active()) >= config.MAX_LIVE_TOTAL or (active() and load.busy()):
+        raise ValueError("NovaCut is recording as many streams as it can right now. Try again in a little while.")
+    from . import tools
+    if tools.missing():
+        raise ValueError(tools.HELP)
+    settings = dict(creators.get(cid) or creators.DEFAULTS)
+    opts = job.get("options") or {}
+    for k in ("style", "layout", "min_len", "max_len", "max_clips", "min_score"):
+        if k in opts and opts[k] is not None:
+            settings[k] = opts[k]
+    job["kind"] = "live"
+    job["source"] = {**job["source"], "type": "live", "url": url}
+    if meta:
+        job["title"] = meta.get("title") or job.get("title") or job["source"].get("name") or url
+        job["uploader"] = meta.get("uploader") or job.get("uploader") or ""
+    if not job.get("thumb") and media.save_thumb(Path(job["dir"]), url=url):
+        job["thumb"] = True
+    job.update(status="live", stage="Connecting to the stream", error=None)
+    jobs.save(job)
+    Session(job, settings).start()
     return job
 
 
