@@ -17,7 +17,7 @@ NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 # YouTube sometimes refuses a server's downloads altogether ("sign in to confirm you're not a bot"). It is a
 # refusal of the server, not of one video, so once it happens YouTube links are turned away at once for a few
 # minutes, with a clear message, instead of each one waiting to fail. Then the next link simply tries again.
-YT_PAUSE = 600
+YT_PAUSE = 120
 _yt_refused_until = 0.0
 YT_BLOCKED = ("YouTube isn't letting NovaCut download videos right now. Upload the video file instead, or use a "
               "Twitch or Kick link. YouTube links will be tried again in a few minutes.")
@@ -96,11 +96,18 @@ class _Quiet:
 
 
 def _ydl(opts):
+    import shutil
     import yt_dlp
+    extra = {}
+    if not shutil.which("deno") and shutil.which("node"):
+        extra["js_runtimes"] = {"node": {}}
+    cookies = (config.env("NOVACUT_YT_COOKIES") or "").strip()
+    if cookies and Path(cookies).is_file():
+        extra["cookiefile"] = cookies
     # a channel or playlist link is answered as "a list" straight away, never walked video by video
     return yt_dlp.YoutubeDL({"noplaylist": True, "quiet": True, "no_warnings": True, "logger": _Quiet(),
                              "extract_flat": "in_playlist", "playlistend": 1, "socket_timeout": 20,
-                             "concurrent_fragment_downloads": 4, **opts})
+                             "concurrent_fragment_downloads": 4, **extra, **opts})
 
 
 def _video_format(height):

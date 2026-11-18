@@ -179,8 +179,11 @@ def ask_ai(prompt, schema=None, purpose="AI call"):
                 return out, model, sent + wrote
             except Exception as e:  # noqa: BLE001
                 last = e
-                if "HTTP 429" in str(e) or "HTTP 5" in str(e):
-                    time.sleep(4 * (attempt + 1))
+                msg = str(e)
+                if "PerDay" in msg or "free_tier_requests" in msg:
+                    break  # daily quota exhausted on this model: move straight to the next fallback model
+                if "HTTP 429" in msg or "HTTP 5" in msg:
+                    time.sleep(6 * (attempt + 1))
                     continue
                 break
     ai.note_problem(last)

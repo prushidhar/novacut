@@ -137,6 +137,7 @@ def save(provider_id: str, model_ids, address: str = "", new_key=None) -> dict:
             pass
         tmp.replace(f)
         _saved["at"] = None
+    clear_problem()
     return public()
 
 
