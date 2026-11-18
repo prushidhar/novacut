@@ -108,10 +108,7 @@ def link_preview(request: Request, url: str = ""):
         raise HTTPException(422, str(e))
     except HTTPException:
         raise
-    except Exception as e:
-        msg = str(e).lower()
-        if "offline" in msg or "not live" in msg or "not currently live" in msg:
-            raise HTTPException(422, "This channel is not live right now.")
+    except Exception:
         raise HTTPException(422, "Couldn't open that video. Check the link is public and complete.")
 
 
@@ -130,34 +127,13 @@ def create_from_link(body: dict = Body(...)):
     creator = str(body.get("creator") or "") or None
     if creator and not creators.get(creator):
         raise HTTPException(404, "No such creator")
-    seen = media._PREVIEWS.get(url)
-    if seen and seen.get("is_live"):
-        try:
-            with _create_lock:
-                job = jobs.create(
-                    {"type": "live", "url": url, "name": seen["title"] or url},
-                    body.get("options") or {},
-                    enqueue=False,
-                    creator=creator,
-                    kind="live",
-                )
-        except (ValueError, TypeError) as e:
-            raise HTTPException(400, str(e) if isinstance(e, ValueError) else "Those options aren't valid.")
-        job.update(title=seen["title"], uploader=seen["uploader"], duration=0)
-        if media.save_thumb(jobs.job_dir(job["id"]), url=url):
-            job["thumb"] = True
-        try:
-            live.start_from_job(job, seen)
-        except ValueError as e:
-            jobs.delete(job["id"])
-            raise HTTPException(409, str(e))
-        return jobs.public(job)
     try:
         with _create_lock:
             _job_slots()
             job = jobs.create({"type": "url", "url": url, "name": url}, body.get("options") or {}, creator=creator)
     except (ValueError, TypeError) as e:
         raise HTTPException(400, str(e) if isinstance(e, ValueError) else "Those options aren't valid.")
+    seen = media._PREVIEWS.get(url)
     if seen:
         job.update(title=seen["title"], uploader=seen["uploader"], duration=seen["duration"])
         if media.save_thumb(jobs.job_dir(job["id"]), url=url):

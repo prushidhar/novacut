@@ -1455,7 +1455,7 @@ const att = () => DRAFTS[draftKey()] ||= {files: [], links: [], note: null, busy
 const VIDEO_EXT = /\.(mp4|mov|mkv|webm|m4v|ts|flv)$/i;
 const fmtLen = s => { s = Math.round(s || 0); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${x}` : `${m}:${x}`; };
 const fmtSize = b => b >= 1e9 ? (b / 1e9).toFixed(1) + " GB" : Math.max(1, Math.round(b / 1e6)) + " MB";
-const isChannel = u => /youtube\.com\/(@[^/]+|channel\/[^/]+)\/?(videos|streams)?\/?$/.test(u);
+const isChannel = u => /^(https?:\/\/)?(www\.)?(twitch\.tv|kick\.com)\/[A-Za-z0-9_]+\/?$/.test(u) || /youtube\.com\/(@[^/]+|channel\/[^/]+)\/?(live|videos|streams)?\/?$/.test(u);
 const looksLink = u => /^https?:\/\/([\w-]+\.)*(youtube\.com|youtu\.be|twitch\.tv|kick\.com)\//i.test(u);
 const fullLink = u => /[?&]v=[\w-]{11}\b|youtu\.be\/[\w-]{11}\b|\/(shorts|live|embed)\/[\w-]{11}\b|twitch\.tv\/videos\/\d{6,}|clips\.twitch\.tv\/\w|twitch\.tv\/\w+\/clip\/\w|kick\.com\/[\w-]+\/(videos?|clips?)\/[\w-]{6,}/i.test(u);
 const batchMax = () => S.status.max_batch || 5;
@@ -1641,11 +1641,11 @@ async function makeClips() {
     return;
   }
   A.busy = true; drawAtt();
-  let started = 0, liveStarted = 0, failed = 0;
+  let started = 0, failed = 0;
   const who = targetCreator(), opts = jobOptions();
   for (const l of A.links.filter(x => x.state === "ok")) {
     l.sending = true; drawAtt();
-    try { const j = await send("/api/jobs", {url: l.url, options: opts, creator: who}); l.state = "done"; started++; if (j?.status === "live" || l.info?.is_live) liveStarted++; }
+    try { await send("/api/jobs", {url: l.url, options: opts, creator: who}); l.state = "done"; started++; }
     catch (e) { l.state = "bad"; l.msg = e.message; failed++; }
     l.sending = false; drawAtt();
   }
@@ -1659,9 +1659,7 @@ async function makeClips() {
   A.files = A.files.filter(f => { if (f.state === "done") { URL.revokeObjectURL(f.src); return false; } return true; });
   A.busy = false; drawAtt();
   if (started) {
-    toast(liveStarted && liveStarted === started
-      ? "Live stream recording started. Clips will appear as moments happen."
-      : `${started === 1 ? "Your video is" : started + " videos are"} being clipped now.`, "ok");
+    toast(`${started === 1 ? "Your video is" : started + " videos are"} being clipped now.`, "ok");
     if (!failed && S.view === "overview") go(who ? "c:" + who : "library"); else tick();
   } else if (failed) toast("Nothing was started. The reason is shown on the video.", "bad");
 }
@@ -1700,9 +1698,9 @@ function clipHtml(j, c) {
 }
 function spark(vals, cls, lo, hi) { return `<div class="spark ${cls}">${vals.map(v => `<i style="height:${Math.max(4, Math.min(100, (v - lo) / (hi - lo) * 100))}%"></i>`).join("")}</div>`; }
 const EVERY = [[1, "1 min", ""], [2, "2 min", ""], [3, "3 min", ""], [5, "5 min", ""], [10, "10 min", ""]];
-function everyPick(cid, v, jid) {
+function everyPick(cid, v) {
   const cur = EVERY.find(x => x[0] === Number(v)) || EVERY[2];
-  return `<div class="pick evpick"><input type="hidden" data-every="${esc(cid || "")}" data-every-job="${esc(jid || "")}" value="${cur[0]}">
+  return `<div class="pick evpick"><input type="hidden" data-every="${esc(cid || "")}" value="${cur[0]}">
     <button type="button" class="evbtn pick-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="How often the AI checks"><span class="pv">${cur[1]}</span>${ic("caret").replace("<svg", '<svg class="car"')}</button>
     <div class="pick-menu" role="listbox">${EVERY.map(([k, l, h]) => `<button type="button" class="pick-opt" role="option" data-v="${k}" aria-selected="${k === cur[0]}"><span class="pl">${l}</span>${h ? `<small class="ph">${h}</small>` : ""}${ic("check").replace("<svg", '<svg class="tick"')}</button>`).join("")}</div></div>`;
 }
@@ -1715,7 +1713,7 @@ function liveHtml(j) {
         <button class="btn" data-act="clipnow" data-j="${j.id}" data-s="60">Last 60s</button>
         <button class="btn danger" data-act="stoplive" data-j="${j.id}">${ic("stop")}Stop</button></div></div>
     <div class="stats"><div class="stat"><b>${fmt(L.elapsed)}</b><span>Recorded</span></div><div class="stat"><b>${Math.round(L.buffer_sec / 60)} min</b><span>Kept in buffer</span></div>
-      <div class="stat">${everyPick(j.creator, L.every_min ?? 3, j.id)}<span>${L.every_min === 0 ? (L.auto?.warming ? "AI checks: learning the stream" : L.auto?.waiting ? "AI checks: jump spotted, checking soon" : `AI checks on jumps · ${L.auto?.spikes || 0} so far`) : "AI checks every"}</span></div>
+      <div class="stat">${everyPick(j.creator, L.every_min ?? 3)}<span>${L.every_min === 0 ? (L.auto?.warming ? "AI checks: learning the stream" : L.auto?.waiting ? "AI checks: jump spotted, checking soon" : `AI checks on jumps · ${L.auto?.spikes || 0} so far`) : "AI checks every"}</span></div>
       <div class="stat"><b>${L.checks}</b><span>AI calls${L.skipped ? ` · ${L.skipped} skipped` : ""}${L.rejected ? ` · ${L.rejected} turned down` : ""}</span></div><div class="stat"><b>${j.clips.length}</b><span>Clips so far</span></div>
       ${L.pending_clips ? `<div class="stat"><b>${L.pending_clips}</b><span>Hand clip being prepared</span></div>` : ""}</div>
     <div class="meters">
@@ -1809,7 +1807,7 @@ function drawJobs() {
     let el = $(`section[data-job="${j.id}"]`, root);
     if (!el) { el = document.createElement("section"); el.className = "job"; el.dataset.job = j.id; }
     if (root.children[i] !== el) root.insertBefore(el, root.children[i] || null);
-    if (!(j.status === "live" && el.querySelector(".pick.open"))) put(el, jobHtml(j));
+    put(el, jobHtml(j));
   });
 }
 
@@ -2226,10 +2224,8 @@ document.addEventListener("change", async e => {
     return render();
   }
   if (t.dataset.every !== undefined) {
-    const cid = t.dataset.every, jid = t.dataset.everyJob;
-    const url = cid ? `/api/creators/${cid}` : jid ? `/api/live/${jid}/settings` : "";
-    if (!url) return toast("Could not update check interval.", "bad");
-    try { await send(url, {ai_every_min: Number(t.value)}, "PUT"); toast(`AI checks every ${t.value} min`, "ok"); tick(); }
+    const cid = t.dataset.every; if (!cid) return toast("This recording isn't filed under a creator.", "bad");
+    try { await send(`/api/creators/${cid}`, {ai_every_min: Number(t.value)}, "PUT"); toast(`AI checks every ${t.value} min`, "ok"); tick(); }
     catch (err) { toast(err.message, "bad"); }
     return;
   }

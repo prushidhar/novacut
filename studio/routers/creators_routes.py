@@ -143,18 +143,3 @@ def clip_now(jid: str, body: dict = Body(...)):
     except (ValueError, TypeError) as e:
         raise HTTPException(400, str(e))
     return {"ok": True}
-
-
-@router.put("/api/live/{jid}/settings")
-def live_settings(jid: str, body: dict = Body(...)):
-    s = live.mine(jid)
-    if not s or s.ended:
-        raise HTTPException(404, "This recording has already ended")
-    if "ai_every_min" in body:
-        try:
-            v = max(1, min(60, int(body["ai_every_min"])))
-        except (ValueError, TypeError):
-            raise HTTPException(400, "Bad check interval")
-        s.settings["ai_every_min"] = v
-        s._publish()
-    return {"ok": True}
