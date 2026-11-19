@@ -180,10 +180,10 @@ def ask_ai(prompt, schema=None, purpose="AI call"):
             except Exception as e:  # noqa: BLE001
                 last = e
                 msg = str(e)
-                if "PerDay" in msg or "free_tier_requests" in msg:
-                    break  # daily quota exhausted on this model: move straight to the next fallback model
+                if "PerDay" in msg or "free_tier_requests" in msg or "503" in msg or "UNAVAILABLE" in msg or "high demand" in msg.lower():
+                    break  # daily quota exhausted or model overloaded: move straight to the next fallback model
                 if "HTTP 429" in msg or "HTTP 5" in msg:
-                    time.sleep(6 * (attempt + 1))
+                    time.sleep(3 * (attempt + 1))
                     continue
                 break
     ai.note_problem(last)

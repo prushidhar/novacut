@@ -21,11 +21,11 @@ from . import config, ctx
 
 # name -> (label shown on the pages, address, how it is spoken to, where to get a key, an example model id)
 PROVIDERS = {
-    "gemini": ("Gemini", "https://generativelanguage.googleapis.com/v1beta/models", "gemini", "https://aistudio.google.com/apikey", "gemini-3.8-flash"),
+    "gemini": ("Gemini", "https://generativelanguage.googleapis.com/v1beta/models", "gemini", "https://aistudio.google.com/apikey", "gemini-flash-lite-latest"),
     "openai": ("OpenAI", "https://api.openai.com/v1", "openai", "https://platform.openai.com/api-keys", "gpt-4o-mini"),
     "xai": ("Grok", "https://api.x.ai/v1", "openai", "https://console.x.ai", "grok-4"),
     "groq": ("Groq", "https://api.groq.com/openai/v1", "openai", "https://console.groq.com/keys", "llama-3.3-70b-versatile"),
-    "openrouter": ("OpenRouter", "https://openrouter.ai/api/v1", "openai", "https://openrouter.ai/keys", "google/gemini-3.8-flash"),
+    "openrouter": ("OpenRouter", "https://openrouter.ai/api/v1", "openai", "https://openrouter.ai/keys", "google/gemini-2.0-flash-001"),
     "anthropic": ("Claude", "https://api.anthropic.com/v1", "anthropic", "https://console.anthropic.com", ""),
     "ollama": ("Ollama (on this machine)", "http://127.0.0.1:11434/v1", "openai", "https://ollama.com", "llama3.1"),
     "custom": ("Custom (OpenAI-compatible)", "", "openai", "", ""),
@@ -170,13 +170,23 @@ def list_models(provider_id=None, address=None, with_key=None) -> list:
 
 
 def test() -> dict:
-    """One tiny request with the settings in use, to prove the key, the address and the model all work."""
+    """One tiny request with the settings in use, to prove the key, the address and at least one model works."""
     ms = models()
     if not ready():
         raise ValueError("Save a service, a model and a key first.")
-    out, sent, wrote = call(ms[0], 'Answer with a JSON array that holds the single string "ok".', {"type": "ARRAY", "items": {"type": "STRING"}})
+    last_err = None
+    for m in ms:
+        try:
+            out, sent, wrote = call(m, 'Answer with a JSON array that holds the single string "ok".', {"type": "ARRAY", "items": {"type": "STRING"}})
+            clear_problem()
+            return {"ok": True, "model": m, "tokens": sent + wrote, "answer": str(out)[:80]}
+        except Exception as e:
+            last_err = e
+            continue
     clear_problem()
-    return {"ok": True, "model": ms[0], "tokens": sent + wrote, "answer": str(out)[:80]}
+    if last_err:
+        raise last_err
+    raise ValueError("No models configured to test.")
 
 
 class AIError(RuntimeError):
@@ -248,6 +258,8 @@ def explain(e) -> str:
         return f"{label()} doesn't know the model \"{name}\". Open Settings, AI, press Find models and pick one from the list."
     if "401" in text or "403" in text or "api key" in low or "api_key" in low or "unauthorized" in low or "permission" in low:
         return f"{label()} refused the key. Paste a working key under Settings, AI."
+    if "503" in text or "temporar" in low or "high demand" in low or "unavailable" in low:
+        return f"{label()} is experiencing high demand right now. Try a lighter model like gemini-flash-lite-latest or try again shortly."
     if "429" in text or "quota" in low or "rate limit" in low or "exhausted" in low:
         return f"{label()} says the key has hit its limit or has no credit left. Check the account with {label()}, or try again later."
     if "connect" in low or "timed out" in low or "timeout" in low or "getaddrinfo" in low or "refused" in low:
