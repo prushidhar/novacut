@@ -386,7 +386,13 @@ def render_one(job, clip, words):
         src = Path(clip["src"]) if clip.get("src") else Path(job["source_path"])
         if not clip.get("src"):
             clip["end"] = min(clip["end"], job["duration"])
-        local = dict(clip, start=clip["start"] - off, end=clip["end"] - off, hook=roman.to_roman(clip.get("hook") or ""))
+        if clip["end"] <= clip["start"] or clip["end"] - clip["start"] < 1.0:
+            raise RuntimeError(f"Invalid clip boundaries: start ({clip['start']:.2f}s) is greater than or equal to end ({clip['end']:.2f}s).")
+        local_start = max(0.0, clip["start"] - off)
+        local_end = max(local_start + 1.0, clip["end"] - off)
+        local = dict(clip, start=local_start, end=local_end, hook=roman.to_roman(clip.get("hook") or ""))
+        if local["end"] <= local["start"] or local["end"] - local["start"] < 1.0:
+            raise RuntimeError(f"Invalid clip duration: {local['end'] - local['start']:.2f}s.")
         span = [round(clip["start"], 2), round(clip["end"], 2), "en2"]      # "en2": captions made always-English
         if clip.get("fixed_for") == span and clip.get("fixed_words") and not any(
                 roman.needs_roman(w.get("w", "")) for w in clip["fixed_words"]):
@@ -482,9 +488,17 @@ def _fetch_piece(job, clip, full_audio):
         part = media.load_audio(wav)
         wav.unlink(missing_ok=True)
         meta = media.probe(piece)
+        dur = float(meta.get("duration") or 0.0)
+        needed = clip["end"] - clip["start"]
+        if dur < 3.0 or dur < min(15.0, needed * 0.4):
+            raise RuntimeError(f"Downloaded section was incomplete ({dur:.1f}s downloaded, needed {needed:.1f}s). The stream may still be processing on YouTube.")
         off = media.find_offset(full_audio, part, want)
-        clip.update(src=str(piece), src_offset=round(off, 2), src_end=round(off + meta["duration"], 2))
-        clip["start"], clip["end"] = max(clip["start"], clip["src_offset"]), min(clip["end"], clip["src_end"])
+        src_end = round(off + dur, 2)
+        clip.update(src=str(piece), src_offset=round(off, 2), src_end=src_end)
+        clip["start"] = max(clip["start"], clip["src_offset"])
+        clip["end"] = min(clip["end"], src_end)
+        if clip["end"] - clip["start"] < 3.0:
+            raise RuntimeError(f"Downloaded section does not cover the clip (available duration: {clip['end'] - clip['start']:.1f}s).")
         job.setdefault("width", meta["width"])
         job.setdefault("height", meta["height"])
     except Exception as e:  # noqa: BLE001

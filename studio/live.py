@@ -486,6 +486,10 @@ class Session:
         clip.update(src=str(src), src_offset=round(offset, 2), src_end=round(offset + dur, 2))
         clip["start"] = max(clip["start"], clip["src_offset"])
         clip["end"] = min(clip["end"], clip["src_end"])
+        if clip["end"] <= clip["start"] or clip["end"] - clip["start"] < 3.0:
+            clip.update(status="error", error="The recorded stream segment was too short for this clip.")
+            jobs.save(self.job)
+            return
         jobs.render_one(self.job, clip, list(self.words))
 
     def _align(self, src, guess, dur):

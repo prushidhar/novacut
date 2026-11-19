@@ -285,6 +285,7 @@ def download_section(url: str, out_dir: Path, stem: str, start: float, end: floa
     out_dir.mkdir(parents=True, exist_ok=True)
     with _youtube_guard(url), _ydl({"format": _video_format(height), "merge_output_format": "mp4",
                "outtmpl": str(out_dir / (stem + ".%(ext)s")),
+               "force_keyframes_at_cuts": True,
                "download_ranges": download_range_func(None, [(max(0.0, start), end)])}) as ydl:
         ydl.download([url])
     return _biggest(out_dir, stem)

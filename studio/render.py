@@ -245,6 +245,8 @@ def render_clip(src: Path, out_dir: Path, name: str, clip: dict, words: list, sr
     """Writes <name>.mp4, <name>.jpg and <name>.ass into out_dir. Returns file names."""
     out_dir.mkdir(parents=True, exist_ok=True)
     start, end = clip["start"], clip["end"]
+    if end <= start or end - start < 0.5:
+        raise ValueError(f"Clip end time ({end:.2f}s) must be after start time ({start:.2f}s).")
     layout, fg_h, hook_y, cap_y = geometry(src_w, src_h, clip.get("layout", "blur"))
     ass = build_ass(words, start, end, clip.get("hook", ""), clip.get("style", "bounce"),
                     clip.get("highlight_words", []), hook_y, cap_y)
@@ -265,8 +267,9 @@ def _render_in(work: Path, src: Path, out_dir: Path, name: str, start, end, layo
     (work / "f").mkdir()
     for f in config.FONTS_DIR.glob("*.ttf"):
         shutil.copyfile(f, work / "f" / f.name)
+    dur = max(0.1, end - start)
     fc = _filter(layout, fg_h) + f"[v0]ass={name}.ass:fontsdir=f[v]"
-    base = ["ffmpeg", "-y", "-v", "error", "-ss", f"{start:.2f}", "-t", f"{end - start:.2f}", "-i", str(src),
+    base = ["ffmpeg", "-y", "-v", "error", "-ss", f"{start:.2f}", "-t", f"{dur:.2f}", "-i", str(src),
             "-filter_complex", fc, "-map", "[v]", "-map", "0:a:0", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
             "-c:a", "aac", "-b:a", "160k", "-ar", "48000", "-movflags", "+faststart", "-pix_fmt"]
     encoders = []
