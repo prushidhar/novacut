@@ -34,8 +34,10 @@ ALIASES = {"google": "gemini", "grok": "xai", "claude": "anthropic", "local": "o
 NO_KEY = {"ollama", "custom"}       # a model running on your own machine needs no key
 
 # ---------------------------------------------------------------- the settings in use
-_lock = threading.Lock()
+_lock = threading.RLock()
 _saved = {"at": None, "data": {}}
+_key_index = 0
+_key_cooldowns: dict[str, float] = {}  # key -> cooldown end timestamp
 
 
 def _file():
@@ -76,8 +78,58 @@ def models() -> list:
     return current()["models"]
 
 
+def get_keys() -> list[str]:
+    """All keys configured for the current provider (supports comma/newline-separated key pools)."""
+    c = current()
+    raw = str(c.get("key") or "").strip()
+    if not raw:
+        return []
+    parts = [p.strip() for p in re.split(r"[\s,;\n\r]+", raw) if p.strip()]
+    return [p for p in parts if len(p) >= 10] or ([raw] if raw else [])
+
+
 def key() -> str:
-    return current()["key"]
+    """Returns the current active, non-cooldown key from the pool."""
+    ks = get_keys()
+    if not ks:
+        return ""
+    now = time.time()
+    with _lock:
+        global _key_index
+        for offset in range(len(ks)):
+            idx = (_key_index + offset) % len(ks)
+            k = ks[idx]
+            if _key_cooldowns.get(k, 0) <= now:
+                _key_index = idx
+                return k
+        # If all keys on cooldown, pick the one expiring soonest
+        _key_index = min(range(len(ks)), key=lambda i: _key_cooldowns.get(ks[i], 0))
+        return ks[_key_index]
+
+
+def rotate_key(failed_key=None, reason="", cooldown=1800.0) -> str:
+    """Marks failed_key as rate-limited/exhausted and advances to the next key."""
+    ks = get_keys()
+    if not ks:
+        return ""
+    now = time.time()
+    with _lock:
+        global _key_index
+        fk = failed_key or (ks[_key_index] if 0 <= _key_index < len(ks) else ks[0])
+        _key_cooldowns[fk] = now + cooldown
+        for offset in range(1, len(ks) + 1):
+            idx = (_key_index + offset) % len(ks)
+            k = ks[idx]
+            if _key_cooldowns.get(k, 0) <= now:
+                _key_index = idx
+                print(f"[AI] Quota hit on key (...{fk[-4:]}). Rotated to next key (...{k[-4:]}).", flush=True)
+                return k
+        _key_index = (_key_index + 1) % len(ks)
+        return ks[_key_index]
+
+
+def cur_key() -> str:
+    return key()
 
 
 def label() -> str:
@@ -95,19 +147,24 @@ def ready() -> bool:
 
 
 def public() -> dict:
-    """What the settings page may see. The key itself never leaves the server: only whether there is one, and
-    its last four characters so the owner can tell which key it is."""
+    """What the settings page may see."""
     c = current()
-    return {"provider": c["provider"], "models": c["models"], "base_url": c["base_url"], "has_key": bool(c["key"]),
-            "key_hint": c["key"][-4:] if len(c["key"]) >= 12 else "", "ready": ready(), "label": label(),
+    ks = get_keys()
+    k_hint = ""
+    if len(ks) > 1:
+        active = key()
+        k_hint = f"{len(ks)} keys in pool (active: ...{active[-4:] if len(active) >= 4 else '?'})"
+    elif ks:
+        k_hint = f"ends in {ks[0][-4:]}" if len(ks[0]) >= 12 else ""
+    return {"provider": c["provider"], "models": c["models"], "base_url": c["base_url"], "has_key": bool(ks),
+            "key_count": len(ks), "key_hint": k_hint, "ready": ready(), "label": label(),
             "saved_here": bool(_from_dashboard().get("provider")),
             "providers": [{"id": k, "label": v[0], "address": v[1], "needs_key": k not in NO_KEY, "key_url": v[3], "example": v[4]}
                           for k, v in PROVIDERS.items()]}
 
 
 def save(provider_id: str, model_ids, address: str = "", new_key=None) -> dict:
-    """Save the choice made in the dashboard. `new_key` None keeps the key that is already there (the page never
-    has it to send back); an empty string removes it."""
+    """Save the choice made in the dashboard. Supports one or multiple keys (comma or newline separated)."""
     p = ALIASES.get(str(provider_id or "").strip().lower(), str(provider_id or "").strip().lower())
     if p not in PROVIDERS:
         raise ValueError("Choose one of the AI services in the list.")
@@ -124,10 +181,13 @@ def save(provider_id: str, model_ids, address: str = "", new_key=None) -> dict:
     if p == "custom" and not address:
         raise ValueError("A custom service needs its address, for example http://127.0.0.1:1234/v1")
     old = current()
-    k = old["key"] if new_key is None and old["provider"] == p else str(new_key or "").strip()[:400]
+    k = old["key"] if new_key is None and old["provider"] == p else str(new_key or "").strip()[:4000]
     if not k and p not in NO_KEY:
         raise ValueError("Paste the key for this service.")
     with _lock:
+        global _key_index, _key_cooldowns
+        _key_index = 0
+        _key_cooldowns.clear()
         f = _file()
         tmp = f.with_suffix(".tmp")
         tmp.write_text(json.dumps({"provider": p, "models": ms, "base_url": address, "key": k}), encoding="utf-8")
@@ -179,7 +239,9 @@ def test() -> dict:
         try:
             out, sent, wrote = call(m, 'Answer with a JSON array that holds the single string "ok".', {"type": "ARRAY", "items": {"type": "STRING"}})
             clear_problem()
-            return {"ok": True, "model": m, "tokens": sent + wrote, "answer": str(out)[:80]}
+            ks = get_keys()
+            k_info = f" ({len(ks)} keys active in pool)" if len(ks) > 1 else ""
+            return {"ok": True, "model": m, "tokens": sent + wrote, "answer": str(out)[:80], "key_hint": k_info}
         except Exception as e:
             last_err = e
             continue
@@ -278,8 +340,8 @@ def clear_problem():
     problem.update(text="", at=0.0)
 
 
-def _fail(r, model):
-    text = r.text[:300].replace(key() or "\0", "<key>")
+def _fail(r, model, k=None):
+    text = r.text[:300].replace(k or key() or "\0", "<key>")
     raise AIError(f"HTTP {r.status_code} {text}")
 
 
@@ -316,22 +378,40 @@ def _parse(text):
 
 # ---------------------------------------------------------------- one call
 def call(model: str, prompt: str, schema: dict):
-    """Ask one model. Returns (the parsed JSON answer, tokens sent, tokens written back)."""
+    """Ask one model. Returns (the parsed JSON answer, tokens sent, tokens written back).
+    Automatically rotates through the key pool if a key hits rate limits or quota exhaustion."""
     u = ctx.uid_or_none()
     limiter.check(u)
     how = PROVIDERS[provider()][2]
-    res = {"gemini": _gemini, "openai": _openai, "anthropic": _anthropic}[how](model, prompt, schema)
-    limiter.record_request(u)
-    limiter.record_tokens(u, res[1] + res[2])
-    return res
+    fn = {"gemini": _gemini, "openai": _openai, "anthropic": _anthropic}[how]
+    ks = get_keys()
+    attempts = max(1, len(ks))
+    last_err = None
+    for attempt in range(attempts):
+        cur_k = key()
+        try:
+            res = fn(model, prompt, schema, cur_k)
+            limiter.record_request(u)
+            limiter.record_tokens(u, res[1] + res[2])
+            return res
+        except Exception as e:
+            last_err = e
+            msg = str(e).lower()
+            if any(term in msg for term in ("429", "quota", "rate limit", "exhausted", "perday", "free_tier_requests")) and len(ks) > 1 and attempt < attempts - 1:
+                rotate_key(cur_k, reason="quota_exceeded", cooldown=1800.0)
+                continue
+            raise
+    if last_err:
+        raise last_err
 
 
-def _gemini(model, prompt, schema):
+def _gemini(model, prompt, schema, active_k=None):
+    k = active_k or key()
     body = {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
             "generationConfig": {"temperature": 0.4, "responseMimeType": "application/json", "responseSchema": schema}}
-    r = httpx.post(f"{base_url()}/{model}:generateContent", json=body, headers={"x-goog-api-key": key()}, timeout=120)
+    r = httpx.post(f"{base_url()}/{model}:generateContent", json=body, headers={"x-goog-api-key": k}, timeout=120)
     if r.status_code != 200:
-        _fail(r, model)
+        _fail(r, model, k)
     data = r.json()
     text = "".join(p.get("text", "") for p in data["candidates"][0]["content"]["parts"])
     u = data.get("usageMetadata", {})
@@ -339,8 +419,9 @@ def _gemini(model, prompt, schema):
     return json.loads(text), sent, max(0, int(u.get("totalTokenCount") or 0) - sent)   # the answer, and any thinking billed with it
 
 
-def _openai(model, prompt, schema):
-    headers = {"Authorization": f"Bearer {key()}"} if key() else {}
+def _openai(model, prompt, schema, active_k=None):
+    k = active_k or key()
+    headers = {"Authorization": f"Bearer {k}"} if k else {}
     body = {"model": model, "messages": [{"role": "user", "content": _wrapped(prompt, schema)}]}
     # Most services accept these two extras; a few models refuse one of them, so they are dropped on a refusal.
     extras = [{"temperature": 0.4, "response_format": {"type": "json_object"}}, {"response_format": {"type": "json_object"}}, {}]
@@ -350,18 +431,19 @@ def _openai(model, prompt, schema):
         if r.status_code not in (400, 422):
             break
     if r.status_code != 200:
-        _fail(r, model)
+        _fail(r, model, k)
     data = r.json()
     u = data.get("usage") or {}
     return _parse(data["choices"][0]["message"].get("content")), int(u.get("prompt_tokens") or 0), int(u.get("completion_tokens") or 0)
 
 
-def _anthropic(model, prompt, schema):
+def _anthropic(model, prompt, schema, active_k=None):
+    k = active_k or key()
     body = {"model": model, "max_tokens": 8192, "messages": [{"role": "user", "content": _wrapped(prompt, schema)}]}
     r = httpx.post(f"{base_url()}/messages", json=body, timeout=180,
-                   headers={"x-api-key": key(), "anthropic-version": "2023-06-01"})
+                   headers={"x-api-key": k, "anthropic-version": "2023-06-01"})
     if r.status_code != 200:
-        _fail(r, model)
+        _fail(r, model, k)
     data = r.json()
     text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
     u = data.get("usage") or {}
