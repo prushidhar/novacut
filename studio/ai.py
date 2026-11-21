@@ -150,21 +150,35 @@ def public() -> dict:
     """What the settings page may see."""
     c = current()
     ks = get_keys()
+    now = time.time()
+    active = key()
+    pool_info = []
+    for i, k_str in enumerate(ks):
+        cd = _key_cooldowns.get(k_str, 0)
+        remaining = max(0, int(cd - now))
+        is_active = (k_str == active)
+        hint = f"...{k_str[-4:]}" if len(k_str) >= 8 else "key"
+        pool_info.append({
+            "index": i + 1,
+            "hint": hint,
+            "active": is_active,
+            "on_cooldown": (remaining > 0),
+            "cooldown_sec": remaining
+        })
     k_hint = ""
     if len(ks) > 1:
-        active = key()
         k_hint = f"{len(ks)} keys in pool (active: ...{active[-4:] if len(active) >= 4 else '?'})"
     elif ks:
-        k_hint = f"ends in {ks[0][-4:]}" if len(ks[0]) >= 12 else ""
+        k_hint = ks[0][-4:] if len(ks[0]) >= 12 else ""
     return {"provider": c["provider"], "models": c["models"], "base_url": c["base_url"], "has_key": bool(ks),
-            "key_count": len(ks), "key_hint": k_hint, "ready": ready(), "label": label(),
+            "key_count": len(ks), "key_hint": k_hint, "pool": pool_info, "ready": ready(), "label": label(),
             "saved_here": bool(_from_dashboard().get("provider")),
             "providers": [{"id": k, "label": v[0], "address": v[1], "needs_key": k not in NO_KEY, "key_url": v[3], "example": v[4]}
                           for k, v in PROVIDERS.items()]}
 
 
 def save(provider_id: str, model_ids, address: str = "", new_key=None) -> dict:
-    """Save the choice made in the dashboard. Supports one or multiple keys (comma or newline separated)."""
+    """Save the choice made in the dashboard. Supports 1, 10, or unlimited keys (comma/newline separated)."""
     p = ALIASES.get(str(provider_id or "").strip().lower(), str(provider_id or "").strip().lower())
     if p not in PROVIDERS:
         raise ValueError("Choose one of the AI services in the list.")
@@ -181,7 +195,9 @@ def save(provider_id: str, model_ids, address: str = "", new_key=None) -> dict:
     if p == "custom" and not address:
         raise ValueError("A custom service needs its address, for example http://127.0.0.1:1234/v1")
     old = current()
-    k = old["key"] if new_key is None and old["provider"] == p else str(new_key or "").strip()[:4000]
+    raw_k = old["key"] if new_key is None and old["provider"] == p else str(new_key or "").strip()[:8000]
+    parsed = [part.strip() for part in re.split(r"[\s,;\n\r]+", raw_k) if part.strip() and len(part.strip()) >= 10]
+    k = ", ".join(parsed) if parsed else raw_k
     if not k and p not in NO_KEY:
         raise ValueError("Paste the key for this service.")
     with _lock:
@@ -397,8 +413,8 @@ def call(model: str, prompt: str, schema: dict):
         except Exception as e:
             last_err = e
             msg = str(e).lower()
-            if any(term in msg for term in ("429", "quota", "rate limit", "exhausted", "perday", "free_tier_requests")) and len(ks) > 1 and attempt < attempts - 1:
-                rotate_key(cur_k, reason="quota_exceeded", cooldown=1800.0)
+            if any(term in msg for term in ("429", "quota", "rate limit", "exhausted", "perday", "free_tier_requests", "api_key_invalid", "api key not valid", "401", "403", "unauthorized")) and len(ks) > 1 and attempt < attempts - 1:
+                rotate_key(cur_k, reason="quota_or_auth_error", cooldown=1800.0)
                 continue
             raise
     if last_err:

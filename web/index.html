@@ -2002,8 +2002,8 @@ const setTabs = () => [
 function aiHints() {
   const k = S.ai, sel = $("#ai_provider"); if (!k || !sel) return;
   const pv = k.providers.find(x => x.id === sel.value) || k.providers[0], same = pv.id === k.provider;
-  $("#ai_key").placeholder = same && k.has_key ? `Saved${k.key_hint ? " (" + k.key_hint + ")" : ""}. Paste new key(s) to replace` : pv.needs_key ? "Paste key(s) - separate multiples with commas" : "Not needed";
-  $("#ai_keyhint").innerHTML = pv.key_url ? `${pv.needs_key ? "Get keys at" : "Set it up at"} <a href="${esc(pv.key_url)}" target="_blank" rel="noopener">${esc(pv.key_url.replace("https://", ""))}</a>. Paste one or multiple keys (separated by commas). When one hits its limit, NovaCut automatically rotates to the next key.` : "Keys stay on this server and are never shown again.";
+  $("#ai_key").placeholder = same && k.has_key ? `Saved ${k.key_count || 1} key${(k.key_count || 1) > 1 ? "s" : ""} in pool. Paste new keys here to add or replace (one per line or comma-separated)` : pv.needs_key ? "Paste 1, 10, or as many keys as you want (one per line or comma-separated)" : "Not needed";
+  $("#ai_keyhint").innerHTML = pv.key_url ? `${pv.needs_key ? "Get keys at" : "Set it up at"} <a href="${esc(pv.key_url)}" target="_blank" rel="noopener">${esc(pv.key_url.replace("https://", ""))}</a>. Save 10 or more keys: NovaCut uses them sequentially and auto-rotates to the next key whenever one hits its limit.` : "Keys stay on this server and are never shown again.";
   $("#ai_model").placeholder = pv.example ? "For example " + pv.example : "The model id, exactly as the service names it";
   $("#ai_base").placeholder = pv.address || "http://127.0.0.1:1234/v1";
   $("#ai_basewrap").hidden = pv.id !== "custom" && !(same && k.base_url);
@@ -2022,7 +2022,21 @@ async function drawSettings() {
           <div class="ai-state">${k.ready ? `<span class="pill ok">${ic("check")}Ready</span><span class="sub">${esc(k.label)} · ${esc(k.models[0] || "")}</span>` : `<span class="pill warn">Not set up</span><span class="sub">Choose a service, paste your key and pick a model.</span>`}</div>
           <div class="ai-form">
             <label class="f">AI service<select id="ai_provider">${k.providers.map(x => `<option value="${esc(x.id)}" ${x.id === k.provider ? "selected" : ""}>${esc(x.label)}</option>`).join("")}</select></label>
-            <label class="f">Key<input id="ai_key" type="password" autocomplete="off" spellcheck="false"><span class="hint" id="ai_keyhint"></span></label>
+            <label class="f">API Keys (Key Pool)<textarea id="ai_key" rows="3" placeholder="Paste 1, 10, or as many API keys as you want (one per line or separated by commas)..." spellcheck="false" style="font-family:monospace;font-size:13px;resize:vertical;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-input, rgba(255,255,255,0.05));color:inherit;"></textarea><span class="hint" id="ai_keyhint"></span></label>
+            ${k.pool && k.pool.length > 0 ? `
+            <div class="key-pool-card" style="margin:6px 0 16px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px;">
+                <strong style="font-size:13px;display:flex;align-items:center;gap:6px;">${ic("bolt")} Key Pool (${k.pool.length} key${k.pool.length > 1 ? "s" : ""} saved)</strong>
+                <span class="sub" style="font-size:12px;color:var(--dim, #888);">Used sequentially · auto-rotates on quota hit</span>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                ${k.pool.map(p => `
+                  <span class="pill ${p.active ? "ok" : p.on_cooldown ? "warn" : ""}" style="font-family:monospace;font-size:12px;display:inline-flex;align-items:center;gap:5px;padding:4px 8px;">
+                    ${p.active ? ic("check") : ""} Key #${p.index} (${esc(p.hint)}) ${p.active ? "· Active" : p.on_cooldown ? `· Cooldown (${p.cooldown_sec}s)` : "· Standby"}
+                  </span>
+                `).join("")}
+              </div>
+            </div>` : ""}
             <label class="f" id="ai_basewrap">Address<input id="ai_base" value="${esc(k.base_url || "")}" spellcheck="false"><span class="hint">Where the service answers. Only needed for a custom service.</span></label>
             <label class="f">Model<span class="with"><input id="ai_model" list="ai_models" value="${esc(k.models.join(", "))}" spellcheck="false"><button class="btn" type="button" data-act="aimodels">Find models</button></span>
               <datalist id="ai_models"></datalist><span class="hint">A fast, inexpensive model is the right choice. Add a second one after a comma to fall back on.</span></label>

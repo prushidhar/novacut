@@ -98,6 +98,36 @@ check("gemini without a key is not ready", not ai.ready())
 os.environ["PEAKCUT_AI_KEY"] = "test-key-123456"
 config._kept.clear()
 
+# ---- Key Pool & Auto-Rotation Tests
+os.environ["PEAKCUT_AI_KEY"] = "key-pool-alpha-1234, key-pool-beta-5678\nkey-pool-gamma-9012"
+config._kept.clear()
+ai._saved["at"] = None
+ks = ai.get_keys()
+check("key pool parses comma and newline separated keys", len(ks) == 3 and ks[0] == "key-pool-alpha-1234" and ks[1] == "key-pool-beta-5678" and ks[2] == "key-pool-gamma-9012")
+
+# Test rotation on quota exceeded (HTTP 429)
+attempt_keys = []
+def quota_post(url, json=None, headers=None, timeout=None, **_k):
+    k = (headers or {}).get("x-goog-api-key")
+    attempt_keys.append(k)
+    if k == "key-pool-alpha-1234":
+        return Reply(429, {"error": {"message": "Resource has been exhausted (e.g. check quota)."}})
+    return Reply(200, {"candidates": [{"content": {"parts": [{"text": json_text([CLIP])}]}}],
+                       "usageMetadata": {"promptTokenCount": 100, "totalTokenCount": 130}})
+
+ai.httpx.post = quota_post
+seen.clear()
+out, sent, wrote = ai.call("model-a", "hello", brain.SCHEMA)
+check("key rotation automatically switched to key 2 after 429", out == [CLIP] and attempt_keys == ["key-pool-alpha-1234", "key-pool-beta-5678"])
+pub = ai.public()
+check("public pool shows active and cooldown status", pub["key_count"] == 3 and pub["pool"][0]["on_cooldown"] and pub["pool"][1]["active"])
+
+# Restore fake_post
+ai.httpx.post = fake_post
+os.environ["PEAKCUT_AI_KEY"] = "test-key-123456"
+config._kept.clear()
+ai._saved["at"] = None
+
 # ---- the whole path: a call is made for a user and shows up in their usage, and only theirs
 u1, _ = auth._create("ai-one@example.com", "One", password_hash="x")
 u2, _ = auth._create("ai-two@example.com", "Two", password_hash="x")
