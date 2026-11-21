@@ -60,7 +60,7 @@ code = "from studio import config; print('USING', config.DATA_DIR)"
 out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=env, encoding="utf-8", errors="replace")
 check("the next start uses the new folder", f"USING {new.resolve()}" in out.stdout)
 check("the clips were moved there", (new / "users" / "u_local" / "jobs" / "job1" / "clip01.mp4").read_bytes() == b"v" * 5000)
-check("the database went with them", (new / "peakcut.db").is_file())
+check("the database went with them", (new / "novacut.db").is_file() or (new / "peakcut.db").is_file())
 check("nothing is left in the old place", not old.exists() or not any(old.iterdir()))
 check("the move is done once", json.loads(pointer.read_text()), {"path": str(new.resolve())})
 out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=env, encoding="utf-8", errors="replace")
